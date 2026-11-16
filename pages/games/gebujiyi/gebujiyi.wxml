@@ -1,0 +1,86 @@
+<!--pages/games/gebujiyi/gebujiyi.wxml N-back 工作记忆训练 -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<view class="hero">
+  <view class="hero-emoji">🧠</view>
+  <view class="hero-text">
+    <view class="hero-title">N-back 训练</view>
+    <view class="hero-sub">判断当前格子是否和 {{n}} 步之前是同一个位置</view>
+  </view>
+</view>
+
+<!-- 难度1：记几步（N） -->
+<view class="pick-title">难度 · 记几步</view>
+<view class="n-row">
+  <view wx:for="{{nOptions}}" wx:key="*this"
+        class="n-btn {{n === item ? 'active' : ''}}"
+        bindtap="setN" data-n="{{item}}">{{item}}-back</view>
+</view>
+
+<!-- 难度2：节奏（每回合展示时间） -->
+<view class="pick-title">难度 · 节奏 <text class="pick-sub">{{speedTip}}</text></view>
+<view class="speed-row">
+  <view wx:for="{{speeds}}" wx:key="key"
+        class="speed-btn {{speedIndex === index ? 'active' : ''}}"
+        bindtap="setSpeed" data-i="{{index}}">
+    <view class="speed-label">{{item.label}}</view>
+    <view class="speed-tip">{{item.tip}}</view>
+  </view>
+</view>
+
+<view class="stat-row cute-card">
+  <view class="stat">
+    <view class="stat-num">{{round + 1}}<text class="stat-unit">/{{totalRounds + n}}</text></view>
+    <view class="stat-txt">回合</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num mint">{{correct}}</view>
+    <view class="stat-txt">正确</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{wrong}}</view>
+    <view class="stat-txt">错误</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{accuracy}}%</view>
+    <view class="stat-txt">正确率</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num butter">🏆 {{best}}</view>
+    <view class="stat-txt">最高</view>
+  </view>
+</view>
+
+<!-- 3×3 刺激方格：格子等宽等高，棋盘正方 -->
+<view class="nb-board">
+  <view class="nb-row" wx:for="{{rows}}" wx:for-item="row" wx:key="key"
+        style="margin-bottom:{{index < rows.length - 1 ? gapPct : 0}}%">
+    <view wx:for="{{row.list}}" wx:for-item="c" wx:key="key"
+          class="nb-box" style="width:{{cellPct}}%;padding-bottom:{{cellPct}}%">
+      <view class="nb-cell {{c.active ? 'on' : ''}}"></view>
+    </view>
+  </view>
+</view>
+
+<view class="feedback {{feedbackKey}}">{{feedback || '　'}}</view>
+
+<!-- 作答按钮 -->
+<view class="ans-row">
+  <view class="ans-btn yes {{canAnswer && status === 'playing' ? '' : 'disabled'}}"
+        bindtap="answerYes">✅ 和 {{n}} 步前一样</view>
+  <view class="ans-btn no {{canAnswer && status === 'playing' ? '' : 'disabled'}}"
+        bindtap="answerNo">❌ 不一样</view>
+</view>
+<view class="footer-tip" wx:if="{{status === 'playing' && !canAnswer}}">
+  前 {{n}} 个回合先记住位置，之后才能作答哦～
+</view>
+
+<view class="progress-bar">
+  <view class="progress-fill" style="width:{{progress}}%"></view>
+</view>
+
+<button class="btn-cute start-btn" bindtap="start">{{status === 'playing' ? '🔄 重新开始' : (status === 'over' ? '再来一轮' : '开始训练')}}</button>
+
+<view class="footer-tip">工作记忆训练，坚持练会越来越强 🧠✨</view>
+
+</view>

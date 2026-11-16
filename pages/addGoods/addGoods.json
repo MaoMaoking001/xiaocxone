@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "新增/编辑物品",
+  "usingComponents": {
+    "goods-fields": "/components/goods-fields/index"
+  }
+}

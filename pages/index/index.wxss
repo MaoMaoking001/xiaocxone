@@ -1,0 +1,749 @@
+/* pages/index/index.wxss 首页 · 可爱风 + 显隐取舍 + 拖拽排序 */
+/* 颜色统一使用 var(--primary, 兜底色)，跟随全局主题色变化 */
+
+/* ===== 工具网格 ===== */
+.section-tip {
+  margin: -10rpx 8rpx 16rpx;
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}
+/* 长期可见的小提示：胶囊更醒目，引导用户发现拖拽 / 取舍功能 */
+.section-tip.drag-hint {
+  display: inline-block;
+  background: var(--primary-weak, rgba(255, 143, 171, 0.12));
+  color: var(--primary, #ff8fab);
+  padding: 6rpx 18rpx;
+  border-radius: 999rpx;
+  margin: -6rpx 8rpx 18rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+}
+
+/* ===== 记忆小工具标题行：左边标题 + 右边「排序 / 添加」（只作用于工具卡片）===== */
+.tool-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 36rpx 8rpx 20rpx;
+}
+
+.tool-head .section-title {
+  margin: 0;
+}
+
+/* 添加小组件模式的提示条 */
+.widget-add-tip {
+  padding: 10rpx 20rpx;
+  border-radius: 16rpx;
+  background: var(--primary-weak, rgba(255, 143, 171, 0.14));
+  color: var(--primary-deep, #e07a95);
+  margin: -6rpx 0 18rpx;
+}
+
+/* ===== 首页小组件（独立模块）===== */
+.widget-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18rpx;
+}
+
+.widget-title {
+  font-size: calc(32rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+}
+
+.widget-ops {
+  display: flex;
+  gap: 12rpx;
+}
+
+.widget-op {
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--primary-deep, #e07a95);
+  background: var(--primary-weak, rgba(255, 143, 171, 0.14));
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+}
+
+.widget-op.primary {
+  background: var(--primary, #ff8fab);
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 小组件放大：整行一个大组件，展示内容更充足（类似手机桌面的宽组件） */
+.widget-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20rpx;
+  margin-bottom: 8rpx;
+}
+
+.widget-card {
+  position: relative;
+  z-index: 0;              /* 建立层叠上下文，水印才能垫在卡片背景之上、内容之下 */
+  display: flex;
+  flex-direction: column;
+  min-height: 210rpx;
+  border-radius: 32rpx;
+  padding: 26rpx 28rpx 28rpx;
+  background: var(--card, #fff);
+  border: 2rpx solid var(--line);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.widget-card.editing {
+  animation: wobble 1.6s ease-in-out infinite;
+}
+
+.widget-card.dragging {
+  transform: scale(1.05);
+  box-shadow: 0 12rpx 36rpx var(--primary-mid, rgba(255, 143, 171, 0.4));
+  z-index: 9;
+  animation: none;
+}
+
+/* 水印图标：垫在内容下面，只是填充空白，不抢视线 */
+.w-deco {
+  position: absolute;
+  right: 16rpx;
+  bottom: -18rpx;
+  font-size: calc(150rpx * var(--fs, 1));
+  line-height: 1;
+  opacity: 0.09;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.w-top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.w-icon {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(32rpx * var(--fs, 1));
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.w-name {
+  flex: 1;
+  min-width: 0;
+  font-size: calc(27rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w-del {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: rgba(255, 111, 111, 0.14);
+  color: #ff6f6f;
+  font-size: calc(24rpx * var(--fs, 1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ===== 小组件内部排版：每个组件自己一套，不复用同一个模板 ===== */
+
+/* 通用：竖向排布 + 通用原子（大数值 / 说明 / 胶囊 / 进度条 / 等分格 / 清单） */
+.wg {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.wg-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.wg-big {
+  flex-shrink: 0;
+  font-size: calc(62rpx * var(--fs, 1));
+  font-weight: bold;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.wg-big-u {
+  margin-left: 6rpx;
+  font-size: calc(25rpx * var(--fs, 1));
+  font-weight: normal;
+  color: var(--sub);
+}
+
+/* 右侧说明块：靠右对齐，把卡片右半区用起来 */
+.wg-right-txt {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+}
+
+.wg-pct {
+  font-size: calc(34rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--primary-deep, #e07a95);
+  line-height: 1.1;
+}
+
+.wg-k {
+  font-size: calc(21rpx * var(--fs, 1));
+  color: var(--sub);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wg-right-txt .wg-k {
+  margin-top: 4rpx;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.wg-v {
+  font-size: calc(26rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wg-pill {
+  flex-shrink: 0;
+  max-width: 60%;
+  padding: 6rpx 20rpx;
+  border-radius: 999rpx;
+  font-size: calc(22rpx * var(--fs, 1));
+  background: var(--primary-weak, rgba(255, 143, 171, 0.14));
+  color: var(--primary-deep, #e07a95);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wg-bar {
+  height: 14rpx;
+  border-radius: 999rpx;
+  background: var(--mask);
+  overflow: hidden;
+}
+
+.wg-bar-in {
+  height: 100%;
+  border-radius: 999rpx;
+  transition: width 0.3s;
+}
+
+/* 清单：圆点 / 方框 + 文本 */
+.wg-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.wg-li {
+  display: flex;
+  align-items: center;
+}
+
+.wg-li-txt {
+  flex: 1;
+  min-width: 0;
+  font-size: calc(23rpx * var(--fs, 1));
+  color: var(--sub);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 习惯：待打卡项横向胶囊 */
+.wg-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.wg-chip {
+  max-width: 100%;
+  padding: 6rpx 20rpx;
+  border-radius: 999rpx;
+  font-size: calc(22rpx * var(--fs, 1));
+  background: var(--primary-weak, rgba(255, 143, 171, 0.14));
+  color: var(--primary-deep, #e07a95);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 待办：全部清空时大数字用主题色 */
+.wg-big.ok {
+  color: var(--primary, #ff8fab);
+}
+
+/* 待办：逾期 / 今天到期 的警示标签 */
+.wg-chip.overdue {
+  background: rgba(255, 111, 111, 0.14);
+  color: #ff6f6f;
+}
+
+.wg-chip.today {
+  background: rgba(255, 176, 76, 0.18);
+  color: #e08a00;
+}
+
+/* 待办公用：勾选框 + 标题 + 期限，逐行铺满卡片宽度 */
+.todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.todo-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.todo-box {
+  width: 26rpx;
+  height: 26rpx;
+  border-radius: 8rpx;
+  border: 3rpx solid var(--primary, #ff8fab);
+  box-sizing: border-box;
+  flex-shrink: 0;
+  font-size: calc(18rpx * var(--fs, 1));
+  line-height: 1;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todo-box.done {
+  background: var(--primary, #ff8fab);
+}
+
+.todo-txt {
+  flex: 1;
+  min-width: 0;
+  font-size: calc(24rpx * var(--fs, 1));
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.todo-txt.done {
+  color: var(--sub);
+  text-decoration: line-through;
+}
+
+.todo-tag {
+  flex-shrink: 0;
+  font-size: calc(19rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.todo-tag.overdue {
+  color: #ff6f6f;
+  font-weight: bold;
+}
+
+.todo-tag.today {
+  color: #e08a00;
+  font-weight: bold;
+}
+
+.todo-tag.soon {
+  color: var(--primary-deep, #e07a95);
+}
+
+.todo-tag.done {
+  color: var(--primary-deep, #e07a95);
+}
+
+/* 整行提示条（纪念日的「接下来」、兜底组件的补充信息） */
+.wg-note {
+  padding: 10rpx 18rpx;
+  border-radius: 16rpx;
+  background: var(--mask);
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 备忘录：左心情块 + 右备忘信息 */
+.wg-memo {
+  flex-direction: row;
+  align-items: stretch;
+  gap: 22rpx;
+}
+
+.wg-mood {
+  flex: 0 0 auto;
+  width: 260rpx;
+  padding: 18rpx 20rpx;
+  border-radius: 22rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.wg-mood-emoji {
+  font-size: calc(64rpx * var(--fs, 1));
+  line-height: 1.1;
+}
+
+.wg-mood-txt {
+  margin-top: 8rpx;
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+  line-height: 1.4;
+}
+
+.wg-memo-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10rpx;
+}
+
+.wg-count {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+}
+
+.wg-count-n {
+  font-size: calc(52rpx * var(--fs, 1));
+  font-weight: bold;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.wg-count-u {
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+/* 单词：大字单词 + 今日标签，下面整条释义 */
+.wg-word {
+  gap: 12rpx;
+}
+
+.wg-w-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.wg-w-word {
+  flex: 1;
+  min-width: 0;
+  font-size: calc(58rpx * var(--fs, 1));
+  font-weight: bold;
+  line-height: 1.15;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wg-w-mean {
+  padding: 14rpx 20rpx;
+  border-radius: 18rpx;
+  background: var(--mask);
+  font-size: calc(25rpx * var(--fs, 1));
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.w-empty {
+  padding: 18rpx 0 8rpx;
+  font-size: calc(25rpx * var(--fs, 1));
+  color: var(--sub);
+  line-height: 1.5;
+}
+
+.w-move {
+  position: absolute;
+  top: 68rpx;
+  right: 10rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.w-move-btn {
+  width: 42rpx;
+  height: 42rpx;
+  border-radius: 50%;
+  background: var(--primary, #ff8fab);
+  color: #fff;
+  font-size: calc(22rpx * var(--fs, 1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.w-handle {
+  position: absolute;
+  bottom: 8rpx;
+  right: 12rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+  color: var(--sub);
+  letter-spacing: -2rpx;
+}
+
+.widget-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx 32rpx;
+  margin-bottom: 12rpx;
+}
+
+.widget-empty-ico {
+  font-size: calc(56rpx * var(--fs, 1));
+  margin-bottom: 12rpx;
+}
+
+.widget-empty-txt {
+  font-size: calc(23rpx * var(--fs, 1));
+  color: var(--sub);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* 记忆小工具：一行 3 个卡片 */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+}
+
+.tool-card {
+  border-radius: 24rpx;
+  padding: 20rpx 16rpx 18rpx;
+  box-shadow: var(--shadow);
+  position: relative;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.tool-card:active {
+  transform: scale(0.97);
+}
+
+/* 排序态：卡片微微晃动，提示可拖 */
+.tool-card.editing {
+  animation: wobble 1.6s ease-in-out infinite;
+}
+
+.tool-card.editing:active {
+  transform: scale(1.03);
+}
+
+/* 正在拖拽 */
+.tool-card.dragging {
+  transform: scale(1.06);
+  box-shadow: 0 12rpx 36rpx var(--primary-mid, rgba(255, 143, 171, 0.4));
+  z-index: 9;
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-0.6deg); }
+  50% { transform: rotate(0.6deg); }
+}
+
+.tool-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(32rpx * var(--fs, 1));
+}
+
+.tool-name {
+  margin-top: 12rpx;
+  font-size: calc(25rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tool-desc {
+  margin-top: 4rpx;
+  font-size: calc(19rpx * var(--fs, 1));
+  line-height: 1.35;
+  color: var(--sub);
+  /* 三列卡片更窄，说明最多两行，保证卡片高度整齐 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 首页预览（快捷看板）：卡片上直接展示的一句精简摘要 */
+/* 已加入首页小组件的标记 */
+/* 待开发占位工具：图标灰掉 + 「开发中」小标签，点击不跳转 */
+.tool-card.soon .tool-icon {
+  filter: grayscale(1);
+  opacity: 0.7;
+}
+
+.tool-soon {
+  margin-top: 6rpx;
+  display: inline-block;
+  padding: 2rpx 12rpx;
+  border-radius: 999rpx;
+  background: var(--mask);
+  font-size: calc(18rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.widget-tagged {
+  margin-top: 6rpx;
+  display: inline-block;
+  max-width: 100%;
+  font-size: calc(18rpx * var(--fs, 1));
+  color: var(--primary-deep, #e07a95);
+  background: var(--primary-weak, rgba(255, 143, 171, 0.14));
+  padding: 2rpx 10rpx;
+  border-radius: 999rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 排序模式：隐藏按钮在卡片右下角（不用再跳单独页面） */
+.side-hide {
+  position: absolute;
+  right: 6rpx;
+  bottom: 6rpx;
+  width: 38rpx;
+  height: 38rpx;
+  border-radius: 50%;
+  background: var(--card, #fff);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.12);
+  font-size: calc(20rpx * var(--fs, 1));
+  color: #ff6f6f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 卡片右上角操作区：↑↓ 移动 + 添加小组件，统一收在按键区，不遮挡说明文字 */
+.card-ops {
+  position: absolute;
+  top: 6rpx;
+  right: 6rpx;
+  display: flex;
+  align-items: center;
+  gap: 5rpx;
+  z-index: 2;
+}
+
+.card-op {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: var(--card, #fff);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.12);
+  font-size: calc(20rpx * var(--fs, 1));
+  color: var(--primary-deep, #e07a95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-op.on {
+  background: var(--primary, #ff8fab);
+  color: #fff;
+  font-weight: bold;
+}
+
+.card-op.danger {
+  color: #ff6f6f;
+}
+
+/* ===== 已隐藏工具（只留入口，列表在独立页管理） ===== */
+.hidden-entry {
+  display: flex;
+  align-items: center;
+  margin: 20rpx 0 4rpx;
+  padding: 20rpx 28rpx;
+  border-radius: 24rpx;
+  background: var(--mask);
+}
+
+.hidden-entry-ico {
+  font-size: calc(30rpx * var(--fs, 1));
+  margin-right: 14rpx;
+  opacity: 0.7;
+}
+
+.hidden-entry-txt {
+  flex: 1;
+  font-size: calc(25rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+/* ===== 最近添加 ===== */
+.cell-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.cell-name {
+  font-size: calc(28rpx * var(--fs, 1));
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-sub {
+  margin-top: 6rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+  color: var(--sub);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ===== 底部 ===== */
+.footer-tip {
+  margin-top: 36rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+}

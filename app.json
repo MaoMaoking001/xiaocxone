@@ -1,0 +1,63 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/goodsList/goodsList",
+    "pages/goodsRemind/goodsRemind",
+    "pages/addGoods/addGoods",
+    "pages/game/game",
+    "pages/mine/mine",
+    "pages/profile/edit/edit",
+    "pages/profile/bg/bg",
+    "pages/profile/feedback/feedback",
+    "pages/games/jiyifanpai/jiyifanpai",
+    "pages/games/shuzijiyi/shuzijiyi",
+    "pages/games/tuxingweizhi/tuxingweizhi",
+    "pages/games/ciyujiyi/ciyujiyi",
+    "pages/games/shudu/shudu",
+    "pages/games/shuertefangge/shuertefangge",
+    "pages/games/gebujiyi/gebujiyi",
+    "pages/tools/todo/todo",
+    "pages/tools/habit/habit",
+    "pages/tools/memo/memo",
+    "pages/tools/anniversary/anniversary",
+    "pages/tools/english/english",
+    "pages/tools/hidden/hidden"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff0f4",
+    "navigationBarTitleText": "记忆收纳管家",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#b8a8b0",
+    "selectedColor": "#ff8fab",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/tab/home.png",
+        "selectedIconPath": "images/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/goodsList/goodsList",
+        "text": "物品收纳",
+        "iconPath": "images/tab/box.png",
+        "selectedIconPath": "images/tab/box-active.png"
+      },
+      {
+        "pagePath": "pages/game/game",
+        "text": "游戏",
+        "iconPath": "images/tab/game.png",
+        "selectedIconPath": "images/tab/game-active.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "images/tab/mine.png",
+        "selectedIconPath": "images/tab/mine-active.png"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json"
+}

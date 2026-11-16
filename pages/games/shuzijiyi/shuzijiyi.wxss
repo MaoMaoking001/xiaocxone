@@ -1,0 +1,45 @@
+@import "../../../styles/game.wxss";
+
+/* pages/games/shuzijiyi/shuzijiyi.wxss 数字记忆 */
+
+.round-result {
+  text-align: center;
+  margin: 24rpx 0;
+  font-size: calc(30rpx * var(--fs, 1));
+  color: var(--mint);
+  font-weight: bold;
+}
+
+.stage-box {
+  text-align: center;
+  padding: 60rpx 20rpx;
+}
+
+.big-num {
+  font-size: calc(88rpx * var(--fs, 1));
+  font-weight: bold;
+  letter-spacing: 14rpx;
+  color: var(--text);
+  margin: 40rpx 0;
+}
+
+.hide-emoji {
+  font-size: calc(120rpx * var(--fs, 1));
+  margin-bottom: 30rpx;
+}
+
+.answer-input {
+  text-align: center;
+  font-size: calc(40rpx * var(--fs, 1));
+  letter-spacing: 8rpx;
+  margin: 20rpx 0;
+}
+
+.submit-btn {
+  margin-top: 40rpx;
+}
+
+/* ===== 本页与公共样式的差异（公共部分在 styles/game.wxss） ===== */
+.stat-num {
+  font-size: calc(44rpx * var(--fs, 1));
+}

@@ -1,0 +1,67 @@
+<!--pages/profile/edit/edit.wxml 编辑个人信息 -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<view class="cute-card">
+  <!--头像-->
+  <view class="form-item avatar-row">
+    <view class="form-label">🐰 头像</view>
+    <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+      <image wx:if="{{userInfo.avatarUrl}}" class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="avatar avatar-ph">🐰</view>
+      <view class="avatar-hint">点击更换</view>
+    </button>
+  </view>
+
+  <!--昵称-->
+  <view class="form-item">
+    <view class="form-label">✏️ 昵称</view>
+    <input class="input-cute" type="nickname" placeholder="给自己起个可爱的名字～"
+           placeholder-class="ph" maxlength="12"
+           value="{{userInfo.nickname}}" bindblur="onNicknameChange" />
+  </view>
+
+  <!--性别-->
+  <view class="form-item">
+    <view class="form-label">👶 性别</view>
+    <picker mode="selector" range="{{genderOptions}}" value="{{userInfo.gender}}" bindchange="onGenderChange">
+      <view class="input-cute picker-value">
+        {{genderOptions[userInfo.gender]}}
+        <text class="cell-arrow">›</text>
+      </view>
+    </picker>
+  </view>
+
+  <!--生日-->
+  <view class="form-item">
+    <view class="form-label">🎂 生日</view>
+    <picker mode="date" value="{{userInfo.birthday}}" bindchange="onBirthdayChange">
+      <view class="input-cute picker-value">
+        {{userInfo.birthday || '点击选择（可不填）'}}
+        <text class="cell-arrow">›</text>
+      </view>
+    </picker>
+  </view>
+
+  <!--地区-->
+  <view class="form-item">
+    <view class="form-label">📍 地区</view>
+    <picker mode="region" value="{{userInfo.region}}" bindchange="onRegionChange">
+      <view class="input-cute picker-value">
+        {{userInfo.region || '点击选择（可不填）'}}
+        <text class="cell-arrow">›</text>
+      </view>
+    </picker>
+  </view>
+
+  <!--签名-->
+  <view class="form-item">
+    <view class="form-label">💬 个性签名</view>
+    <textarea class="input-cute area" placeholder="写点什么介绍自己吧～" placeholder-class="ph"
+              maxlength="50" auto-height
+              value="{{userInfo.signature}}" bindblur="onSignatureChange" />
+  </view>
+</view>
+
+<button class="btn-cute save-btn" bindtap="save">💾 保存资料</button>
+
+</view>

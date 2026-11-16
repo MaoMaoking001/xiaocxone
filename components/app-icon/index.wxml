@@ -1,0 +1,9 @@
+<!-- components/app-icon/index.wxml
+     一个方块里放 emoji 或图片，二选一，调用方不用写 wx:if -->
+<view class="ai-wrap {{gray ? 'ai-gray' : ''}}"
+      style="width:{{size}};height:{{size}};border-radius:{{radius}};background:{{bg}};">
+  <!-- 是图片路径就用 image 渲染（src 已由 js 补全前导斜杠） -->
+  <image wx:if="{{isImg}}" class="ai-img" src="{{src}}" mode="{{fit}}" />
+  <!-- 否则当 emoji / 文字渲染 -->
+  <text wx:else class="ai-txt" style="font-size:{{fs}};">{{icon}}</text>
+</view>

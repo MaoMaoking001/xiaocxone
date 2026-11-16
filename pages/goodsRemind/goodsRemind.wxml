@@ -1,0 +1,107 @@
+<!--pages/goodsRemind/goodsRemind.wxml 保质期提醒设置
+    三段：提醒规则（阈值）/ 提醒方式（开关）/ 已忽略记录 -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+  <!-- 这一页没有「保存」按钮：所有改动即时写进本地配置，
+       先把这件事说清楚，用户才不会到处找 -->
+  <view class="auto-tip">改动即时生效，无需手动保存</view>
+
+  <!-- 规则：多少天内算临期 -->
+  <view class="cute-card set-card">
+    <view class="set-head">
+      <view class="set-title">提醒规则</view>
+      <view wx:if="{{soonDays !== defaultSoon}}" class="set-reset" hover-class="tap-shrink"
+            bindtap="resetSoon">恢复默认 {{defaultSoon}} 天</view>
+    </view>
+
+    <!-- 阈值放大成一个数字，右边一句话说明它对应到哪一天，
+         比"174 天"这种纯数字更容易判断设得合不合适 -->
+    <view class="rule-top">
+      <view class="rule-num">{{soonText}}<text class="rule-unit">天</text></view>
+      <view class="rule-desc">
+        <view class="rule-desc-main">剩余 ≤ {{soonText}} 天算「即将过期」</view>
+        <view class="rule-desc-sub">{{limitDate}} 前到期的都会被提醒</view>
+      </view>
+    </view>
+
+    <view class="set-slider-row">
+      <view class="set-step" hover-class="tap-shrink" bindtap="stepSoon" data-d="-1">−</view>
+      <slider class="set-slider"
+              min="{{soonMin}}" max="{{soonMax}}" step="1" value="{{soonDays}}"
+              activeColor="{{accent}}" backgroundColor="{{sliderBg}}" block-size="24"
+              bindchanging="onSoonChanging" bindchange="onSoonChange" />
+      <view class="set-step" hover-class="tap-shrink" bindtap="stepSoon" data-d="1">＋</view>
+    </view>
+
+    <!-- 1~365 天跨度太大，手指很难正好停在 30 这种整数上，给几个常用档位 -->
+    <view class="preset-row">
+      <view wx:for="{{presets}}" wx:key="*this" class="preset {{soonDays === item ? 'on' : ''}}"
+            hover-class="tap-shrink" bindtap="pickSoon" data-d="{{item}}">{{item}} 天</view>
+    </view>
+
+    <view class="set-tip">早于今天到期的算「已过期」。超过 {{soonText}} 天的物品不参与提醒，也不计入角标。</view>
+  </view>
+
+  <!-- 方式：会不会弹窗、弹几次、要不要角标 -->
+  <view class="cute-card set-card">
+    <view class="set-head">
+      <view class="set-title">提醒方式</view>
+    </view>
+
+    <!-- 免打扰开着时弹窗根本不会出现，「每天只弹一次」就没意义了：
+         置灰 + 换掉说明，而不是让用户点了没反应 -->
+    <view class="set-item {{mute ? 'dim' : ''}}">
+      <view class="set-item-main">
+        <view class="set-label">每天只弹一次窗</view>
+        <view class="set-tip sub">{{mute ? '免打扰已开启，不会弹窗，这一项暂时用不上' : '关闭后，每次进入「物品收纳」都会弹一次'}}</view>
+      </view>
+      <switch class="set-switch" checked="{{dailyOnce}}" disabled="{{mute}}" color="{{accent}}" bindchange="onDailyOnce" />
+    </view>
+
+    <view class="set-item">
+      <view class="set-item-main">
+        <view class="set-label">免打扰（不弹窗）</view>
+        <view class="set-tip sub">顶部提醒卡和角标照常显示，不会漏掉</view>
+      </view>
+      <switch class="set-switch" checked="{{mute}}" color="{{accent}}" bindchange="onMute" />
+    </view>
+
+    <view class="set-item">
+      <view class="set-item-main">
+        <view class="set-label">显示 tabBar 角标</view>
+        <view class="set-tip sub">在底部「物品收纳」上显示待处理件数</view>
+      </view>
+      <switch class="set-switch" checked="{{badge}}" color="{{accent}}" bindchange="onBadge" />
+    </view>
+  </view>
+
+  <!-- 已处理的提醒：逐条可恢复，也可以一次全部恢复 -->
+  <view class="cute-card set-card">
+    <view class="set-head">
+      <view class="set-title">已忽略的提醒<text wx:if="{{mutedCount}}" class="set-count">{{mutedCount}}</text></view>
+      <view wx:if="{{mutedCount}}" class="set-reset" hover-class="tap-shrink" bindtap="clearMuted">全部恢复</view>
+    </view>
+
+    <block wx:if="{{mutedCount}}">
+      <view wx:for="{{mutedList}}" wx:key="_id" class="muted-item">
+        <view class="muted-main">
+          <view class="muted-name {{item.missing ? 'gone' : ''}}">{{item.name}}</view>
+          <view class="muted-meta">{{item.text}}</view>
+        </view>
+        <!-- 只恢复这一件：catchtap 防止点到整行的其他动作 -->
+        <view class="muted-back" hover-class="tap-shrink" catchtap="restoreOne" data-id="{{item._id}}">恢复</view>
+      </view>
+      <view wx:if="{{mutedTip}}" class="set-tip">{{mutedTip}}</view>
+    </block>
+    <!-- 0 件时直接说"没有"，不给一个点不动的灰按钮 -->
+    <view wx:else class="muted-empty">还没有忽略过任何提醒</view>
+
+    <view class="set-tip sub">点「恢复」只把那一件放回提醒卡；忽略从不删除或修改物品本身。</view>
+  </view>
+
+  <view class="set-foot">
+    <view>提醒只在小程序内生效：进入页面时检查一次，不会在后台推送。</view>
+    <view>微信订阅消息需要用户授权和云函数，暂未开启。</view>
+  </view>
+
+</view>

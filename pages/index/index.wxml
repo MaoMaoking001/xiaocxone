@@ -1,0 +1,305 @@
+<!--pages/index/index.wxml 首页 · 多功能记忆中心（支持显隐取舍 + 拖拽排序）
+
+  【这个文件的结构】
+    ① 首页小组件区（可拖动排序、可点 ✕ 移除）
+    ② 工具卡片九宫格（可拖动排序、可隐藏、可加小组件）
+    ③ 最近添加的物品（云端数据）
+    下面用 <template name="xxx"> 把"一张小组件卡""一张工具卡"抽出来复用，
+    真正渲染时才用 <template is="xxx" data="{{...}}" /> 传参数进去。
+    模板内部拿到的变量就是 data 里传的那几个（widgets / item / index …），
+    拿不到页面 data 的其他字段，这一点和普通节点不同。
+
+  【bind 和 catch 的区别（这个文件反复用到，必须懂）】
+    bindxxx   事件会"冒泡"：点内层按钮，外层容器的点击事件也会一起触发
+    catchxxx  事件不冒泡：内层处理完就停，外层收不到
+    所以：卡片整体 bindtap（点击进页面），卡片里的 ✕ 用 catchtap（防止顺带跳转）；
+         排序模式下用 catchtouchmove 接管滑动，避免页面跟着手指一起滚。
+-->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<!-- ============ 首页小组件（独立模块，和工具卡片分开） ============ -->
+<view class="widget-head">
+  <view class="widget-title">🧩 首页小组件</view>
+  <view class="widget-ops">
+    <!-- 这一组只操作「小组件」，不影响下面的工具卡片 -->
+    <block wx:if="{{widgetEditMode || widgetAddMode}}">
+      <view wx:if="{{widgetEditMode}}" class="widget-op" bindtap="resetWidgetOrder">↺ 恢复默认</view>
+      <view class="widget-op primary" bindtap="finishWidgetEdit">✓ 完成</view>
+    </block>
+    <block wx:else>
+      <view class="widget-op" bindtap="enterWidgetEdit">⇅ 排序</view>
+      <view class="widget-op" bindtap="enterAddWidget">＋ 添加</view>
+    </block>
+  </view>
+</view>
+
+<!-- 添加小组件模式：点下方工具卡片右上角的 ＋ 即可加入/移除小组件 -->
+<view wx:if="{{widgetAddMode}}" class="section-tip widget-add-tip">
+  添加小组件模式：点工具卡片右上角的 ＋（已加入的显示 🧩），点上面的「✓ 完成」退出
+</view>
+
+<block wx:if="{{widgets.length > 0}}">
+  <view class="section-tip" wx:if="{{widgetEditMode}}">小组件排序模式：拖动调整位置，或用卡片上的 ↑↓ 微调；小组件顺序和下面工具卡片的顺序互不影响</view>
+  <!--
+    这里把同一个网格写了两遍，只为了换 touchmove 的绑定方式：
+      排序模式 → catchtouchmove：拦住手势，页面不会跟着滚动，手指滑动只用来换位置
+      普通模式 → bindtouchmove  ：允许页面正常上下滚，用户平时翻页不受影响
+    （两个 view 的 class / id / 子模板完全一样，只是事件前缀不同）
+  -->
+  <view wx:if="{{widgetEditMode}}" class="widget-grid" id="widget-grid"
+        catchtouchmove="onWidgetTouchMove"
+        catchtouchend="onWidgetTouchEnd">
+    <template is="widgetCards" data="{{widgets: widgets, widgetEditMode: widgetEditMode, wdragIndex: wdragIndex}}" />
+  </view>
+  <view wx:else class="widget-grid" id="widget-grid"
+        bindtouchmove="onWidgetTouchMove"
+        bindtouchend="onWidgetTouchEnd">
+    <template is="widgetCards" data="{{widgets: widgets, widgetEditMode: widgetEditMode, wdragIndex: wdragIndex}}" />
+  </view>
+</block>
+
+<view wx:if="{{widgets.length === 0}}" class="cute-card widget-empty">
+  <view class="widget-empty-ico">🧩</view>
+  <view class="widget-empty-txt">还没有小组件～点上方「＋ 添加」进入编辑，再点工具卡片右上角的 ＋，就能把核心信息直接放首页</view>
+</view>
+
+<template name="widgetCards">
+  <view wx:for="{{widgets}}" wx:key="key"
+        class="widget-card type-{{item.type}} {{widgetEditMode ? 'editing' : ''}} {{wdragIndex === index ? 'dragging' : ''}}"
+        style="border-color:{{item.color}}55;border-left:8rpx solid {{item.color}}"
+        bindtap="goWidget"
+        bindlongpress="enterWidgetEdit"
+        bindtouchstart="onWidgetTouchStart"
+        data-url="{{item.url}}"
+        data-name="{{item.name}}"
+        data-index="{{index}}">
+    <!-- 淡淡的水印图标：铺满卡片空白，统一各组件观感 -->
+    <view class="w-deco" style="color:{{item.color}}">{{item.icon}}</view>
+
+    <!-- 组件顶栏：图标 + 名称 + 移除 -->
+    <view class="w-top">
+      <!-- 小组件左上角小图标：同一个组件，尺寸小一号；右边距由 .w-icon 负责 -->
+      <app-icon class="w-icon" icon="{{item.icon}}" size="56rpx" radius="18rpx"
+                fs="calc(32rpx * var(--fs, 1))" bg="{{item.color}}" />
+      <view class="w-name">{{item.name}}</view>
+      <view wx:if="{{widgetEditMode}}" class="w-del" catchtap="removeWidget" data-name="{{item.name}}">✕</view>
+    </view>
+
+    <!-- 组件主体：每类组件用自己的排版（不共用模板） -->
+    <view wx:if="{{item.empty}}" class="w-empty">{{item.empty}}</view>
+
+    <view wx:elif="{{item.type === 'todo'}}" class="wg wg-todo">
+      <!-- 待办：左侧剩余项数 + 右侧完成百分比与总计，下面进度条通栏 -->
+      <view class="wg-row">
+        <view class="wg-big {{item.progress >= 100 ? 'ok' : ''}}">{{item.main}}<text class="wg-big-u">{{item.unit}}</text></view>
+        <view class="wg-right-txt">
+          <view class="wg-pct">{{item.progress}}%</view>
+          <view class="wg-k">{{item.sub}}</view>
+        </view>
+      </view>
+      <view class="wg-bar">
+        <view class="wg-bar-in" style="width:{{item.progress}}%;background:{{item.color}}"></view>
+      </view>
+
+      <!-- 紧急标签：逾期 / 今天到期（只有存在时才占位置） -->
+      <view wx:if="{{item.tags.length > 0}}" class="wg-chips">
+        <view wx:for="{{item.tags}}" wx:for-item="tg" wx:key="t" class="wg-chip {{tg.cls}}">{{tg.t}}</view>
+      </view>
+
+      <!-- 待办明细：勾选框 + 标题 + 右侧期限，逾期/今天到期高亮 -->
+      <view wx:if="{{item.todos.length > 0}}" class="todo-list">
+        <view wx:for="{{item.todos}}" wx:for-item="td" wx:key="key" class="todo-row">
+          <text class="todo-box {{td.done ? 'done' : ''}}">{{td.done ? '✓' : ''}}</text>
+          <text class="todo-txt {{td.done ? 'done' : ''}}">{{td.title}}</text>
+          <text wx:if="{{td.tag}}" class="todo-tag {{td.cls}}">{{td.tag}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:elif="{{item.type === 'habit'}}" class="wg wg-habit">
+      <!-- 习惯：打卡进度在左、百分比在右，进度条通栏，待打卡项横向胶囊铺满 -->
+      <view class="wg-row">
+        <view class="wg-big">{{item.main}}</view>
+        <view class="wg-right-txt">
+          <view class="wg-pct">{{item.progress}}%</view>
+          <view class="wg-k">{{item.sub}}</view>
+        </view>
+      </view>
+      <view class="wg-bar">
+        <view class="wg-bar-in" style="width:{{item.progress}}%;background:{{item.color}}"></view>
+      </view>
+      <view wx:if="{{item.items.length > 0}}" class="wg-chips">
+        <view wx:for="{{item.items}}" wx:for-item="li" wx:key="*this" class="wg-chip">{{li}}</view>
+      </view>
+    </view>
+
+    <view wx:elif="{{item.type === 'memo'}}" class="wg wg-memo">
+      <!-- 备忘录：左边心情块（表情 + 心情文案），右边备忘条数 + 最近内容 -->
+      <view class="wg-mood" style="background:{{item.color}}14">
+        <view class="wg-mood-emoji">{{item.emoji}}</view>
+        <view class="wg-mood-txt">{{item.sub}}</view>
+      </view>
+      <view class="wg-memo-right">
+        <view class="wg-count">
+          <text class="wg-count-n">{{item.main}}</text>
+          <text class="wg-count-u">{{item.unit}}</text>
+        </view>
+        <view wx:if="{{item.items.length > 0}}" class="wg-list">
+          <view wx:for="{{item.items}}" wx:for-item="li" wx:key="*this" class="wg-li">
+            <text class="wg-li-txt">· {{li}}</text>
+          </view>
+        </view>
+        <view wx:else class="wg-k">还没有备忘内容</view>
+      </view>
+    </view>
+
+    <view wx:elif="{{item.type === 'anniv'}}" class="wg wg-anniv">
+      <!-- 纪念日：左侧倒计时、右侧事由与日期，底部一条「接下来」提示条 -->
+      <view class="wg-row">
+        <view class="wg-big">{{item.main}}<text class="wg-big-u">{{item.unit}}</text></view>
+        <view class="wg-right-txt">
+          <view class="wg-v">{{item.sub}}</view>
+          <view class="wg-k">{{item.foot}}</view>
+        </view>
+      </view>
+      <view wx:if="{{item.items.length > 0}}" class="wg-note">{{item.items[0]}}</view>
+    </view>
+
+    <view wx:elif="{{item.type === 'word'}}" class="wg wg-word">
+      <!-- 每日单词：单词大字在左、今日标签在右，下方整条释义栏铺满 -->
+      <view class="wg-w-top">
+        <text class="wg-w-word">{{item.main}}</text>
+        <text class="wg-pill">{{item.sub}}</text>
+      </view>
+      <view wx:if="{{item.foot}}" class="wg-w-mean">{{item.foot}}</view>
+    </view>
+
+    <view wx:else class="wg wg-default">
+      <!-- 兜底：未定制的组件 -->
+      <view class="wg-row">
+        <view class="wg-big">{{item.emoji}}{{item.main}}<text class="wg-big-u">{{item.unit}}</text></view>
+        <view wx:if="{{item.sub}}" class="wg-right-txt"><view class="wg-k">{{item.sub}}</view></view>
+      </view>
+      <view wx:if="{{item.foot}}" class="wg-note">{{item.foot}}</view>
+    </view>
+
+    <!-- 排序模式：↑↓ 微调 + 拖动把手 -->
+    <block wx:if="{{widgetEditMode}}">
+      <view class="w-move">
+        <view class="w-move-btn" catchtap="moveWidget" data-index="{{index}}" data-dir="-1">↑</view>
+        <view class="w-move-btn" catchtap="moveWidget" data-index="{{index}}" data-dir="1">↓</view>
+      </view>
+      <view class="w-handle">⋮⋮</view>
+    </block>
+  </view>
+</template>
+
+<!-- 记忆工具：这一组按钮只操作「工具卡片」，和小组件互不影响 -->
+<view class="tool-head">
+  <view class="section-title">记忆小工具</view>
+  <!-- 添加小组件时（widgetAddMode）由上方小组件那一行统一控制，这里不显示按钮 -->
+  <view class="widget-ops" wx:if="{{!widgetAddMode}}">
+    <block wx:if="{{editMode}}">
+      <view class="widget-op" bindtap="resetOrder">↺ 恢复默认</view>
+      <view class="widget-op primary" bindtap="finishEdit">✓ 完成</view>
+    </block>
+    <block wx:else>
+      <view class="widget-op" bindtap="enterEdit">⇅ 排序</view>
+      <view class="widget-op" bindtap="addTool">＋ 添加</view>
+    </block>
+  </view>
+</view>
+<!-- 长期可见的小提示：告诉用户可以拖动排序 / 自主取舍 -->
+<view class="section-tip drag-hint" wx:if="{{!widgetAddMode}}">✨ 长按卡片（或点这里「⇅ 排序」）进入编辑：拖动排序 · 🚫 隐藏工具</view>
+<view class="section-tip" wx:if="{{editMode && !widgetAddMode}}">编辑模式：拖动卡片排序，也可用 ↑ ↓ 微调；右下角 🚫 把它移出首页，点「✓ 完成」保存</view>
+
+<!--
+  工具卡片模板。
+  注意 <template> 里的节点是"模子"，只有被 <template is="toolCards"> 调用时才会真正渲染；
+  wx:for 里的 item / index 就是这个模子内部的局部变量。
+  卡片上挂了三类事件：
+    bindtap      → 点击进入工具页（编辑模式下 goTool 里会直接 return，不跳转）
+    bindlongpress→ 长按进入排序模式
+    bindtouchstart → 拖拽的起点，记录按下的是第几张
+  卡片内的 ↑ ↓ ＋ 🚫 全部用 catchtap：不然点它们会先触发卡片的 bindtap（跳走）
+-->
+<template name="toolCards">
+  <view wx:for="{{tools}}" wx:key="name"
+        class="tool-card {{editMode ? 'editing' : ''}} {{dragIndex === index ? 'dragging' : ''}} {{item.soon ? 'soon' : ''}}"
+        style="background:var(--primary-soft, #ffe9f0)"
+        bindtap="goTool"
+        bindlongpress="enterEdit"
+        bindtouchstart="onTouchStart"
+        data-url="{{item.url}}"
+        data-tab="{{item.tab}}"
+        data-index="{{index}}"
+        data-name="{{item.name}}">
+    <!-- 图标：emoji 或图片都能用（icon 以 / 开头就当图片），判断逻辑在组件内部 -->
+    <app-icon class="tool-icon" icon="{{item.icon}}" size="60rpx" radius="20rpx"
+              fs="calc(32rpx * var(--fs, 1))" bg="{{item.color}}" gray="{{item.soon}}" />
+    <view class="tool-name">{{item.name}}</view>
+    <view class="tool-desc">{{item.desc}}</view>
+    <!-- 待开发占位卡：不跳转，只提示联系开发者 -->
+    <view wx:if="{{item.soon}}" class="tool-soon">开发中</view>
+    <!-- 已开启的首页小组件会显示在页面上方独立的小组件区 -->
+    <view wx:if="{{item.widgetOn}}" class="widget-tagged">🧩 已在首页小组件</view>
+
+    <!-- 工具排序模式：右上角 ↑↓，右下角 🚫；「添加小组件」模式：只显示 ＋ / 🧩 -->
+    <view wx:if="{{editMode}}" class="card-ops">
+      <block wx:if="{{!widgetAddMode}}">
+        <view class="card-op" catchtap="moveCard" data-index="{{index}}" data-dir="-1">↑</view>
+        <view class="card-op" catchtap="moveCard" data-index="{{index}}" data-dir="1">↓</view>
+      </block>
+      <!-- 待开发的占位工具不支持小组件，所以不显示 ＋ -->
+      <view wx:if="{{!item.soon}}" class="card-op {{item.widgetOn ? 'on' : ''}}" catchtap="toggleWidgetTool" data-name="{{item.name}}">{{item.widgetOn ? '🧩' : '＋'}}</view>
+    </view>
+
+    <view wx:if="{{editMode && !widgetAddMode}}" class="side-hide" catchtap="hideTool" data-name="{{item.name}}">🚫</view>
+  </view>
+</template>
+
+<!-- 排序模式：catchtouchmove 拦住页面滚动，手指滑动只用来换位置（否则拖卡片时页面会跟着滚） -->
+<view wx:if="{{editMode}}" class="tool-grid" id="tool-grid"
+      catchtouchmove="onGridTouchMove"
+      catchtouchend="onGridTouchEnd">
+  <template is="toolCards" data="{{tools: tools, editMode: editMode, dragIndex: dragIndex, widgetAddMode: widgetAddMode}}" />
+</view>
+<!-- 普通模式：不拦截，页面照常滚动 -->
+<view wx:else class="tool-grid" id="tool-grid"
+      bindtouchmove="onGridTouchMove"
+      bindtouchend="onGridTouchEnd">
+  <template is="toolCards" data="{{tools: tools, editMode: editMode, dragIndex: dragIndex, widgetAddMode: widgetAddMode}}" />
+</view>
+
+<!-- 已隐藏工具的入口（不在首页展示列表，只给数量 + 跳转独立页管理） -->
+<view wx:if="{{hiddenCount > 0}}" class="hidden-entry" bindtap="goHidden">
+  <text class="hidden-entry-ico">🙈</text>
+  <text class="hidden-entry-txt">已隐藏 {{hiddenCount}} 个工具</text>
+  <text class="cell-arrow">›</text>
+</view>
+
+<!-- 最近添加的物品 -->
+<view class="section-title">最近添加 📦</view>
+<view class="cute-card">
+  <block wx:if="{{recentList.length > 0}}">
+    <view class="cell" wx:for="{{recentList}}" wx:key="_id" bindtap="goList">
+      <view class="cell-main">
+        <view class="cell-name">{{item.name}}</view>
+        <view class="cell-sub">{{item.category}}{{item.locationPath ? ' · ' + item.locationPath : (item.position ? ' · ' + item.position : '')}}</view>
+      </view>
+      <view class="cell-arrow">›</view>
+    </view>
+  </block>
+  <view wx:elif="{{!loading}}" class="empty-box">
+    <view class="empty-icon">🧺</view>
+    <view class="empty-txt">还没有收纳记录，去记一件吧～</view>
+  </view>
+  <view wx:else class="empty-txt" style="text-align:center;padding:40rpx 0;">加载中…</view>
+</view>
+
+<!-- 底部统计 -->
+<view class="footer-tip" bindtap="goList">
+  已收纳 {{total}} 件物品，点击查看全部 ›
+</view>
+
+</view>

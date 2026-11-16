@@ -1,0 +1,280 @@
+/* pages/tools/english/english.wxss 多单词 + TTS + 短文 */
+
+.hero {
+  padding: 36rpx 32rpx;
+  box-shadow: 0 8rpx 30rpx var(--primary-mid, rgba(255, 143, 171, 0.2));
+  transition: background 0.3s;
+}
+
+.hero-emoji {
+  width: 96rpx;
+  height: 96rpx;
+  font-size: calc(52rpx * var(--fs, 1));
+  margin-right: 24rpx;
+}
+
+.hero-title {
+  font-size: calc(36rpx * var(--fs, 1));
+}
+.hero-sub {
+  margin-top: 8rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+}
+
+.form-label {
+  font-size: calc(26rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+  margin-bottom: 16rpx;
+}
+
+.diff-row { display: flex; gap: 16rpx; }
+
+.diff-btn {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  border-radius: 20rpx;
+  background: var(--mask);
+  color: var(--text);
+  font-size: calc(26rpx * var(--fs, 1));
+}
+
+.diff-btn.active { font-weight: bold; }
+
+/* ===== 云端词库为空时的兜底提示 ===== */
+.offline-tip {
+  margin-top: 18rpx;
+  padding: 14rpx 22rpx;
+  border-radius: 16rpx;
+  background: rgba(232, 155, 60, 0.12);
+  font-size: calc(21rpx * var(--fs, 1));
+  line-height: 1.6;
+  color: #e89b3c;
+}
+
+/* 首次加载（还没有任何词可显示时） */
+.state-tip {
+  margin-top: 28rpx;
+  text-align: center;
+  font-size: calc(24rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+/* ===== 单词卡片 ===== */
+.word-card {
+  margin-top: 24rpx;
+  text-align: center;
+  padding: 36rpx 32rpx 32rpx;
+  position: relative;
+  transition: opacity .15s;
+}
+
+/* 翻页请求中：旧词先淡一点，避免"序号已经变了、词还没换"的割裂感 */
+.word-card.loading {
+  opacity: 0.55;
+}
+
+.word-counter {
+  position: absolute;
+  top: 18rpx;
+  right: 24rpx;
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+  background: var(--mask);
+  padding: 4rpx 14rpx;
+  border-radius: 14rpx;
+}
+
+.word-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18rpx;
+}
+
+.word-main {
+  font-size: calc(70rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--primary);
+  letter-spacing: 4rpx;
+}
+
+.speak-btn {
+  width: 70rpx;
+  height: 70rpx;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(34rpx * var(--fs, 1));
+}
+
+.speak-btn.speak-press { transform: scale(0.9); background: var(--primary); }
+
+.word-phonetic {
+  margin-top: 8rpx;
+  font-size: calc(28rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.word-mean {
+  margin-top: 18rpx;
+  font-size: calc(30rpx * var(--fs, 1));
+  color: var(--text);
+  font-weight: bold;
+}
+
+.word-example {
+  margin-top: 18rpx;
+  background: var(--mask);
+  padding: 16rpx 22rpx;
+  border-radius: 20rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+  color: var(--text);
+  text-align: left;
+  line-height: 1.6;
+}
+
+/* 例句的中文翻译：小一号、次要色，和英文例句区分开 */
+.ex-cn {
+  margin-top: 8rpx;
+  font-size: calc(22rpx * var(--fs, 1));
+  line-height: 1.5;
+  color: var(--sub);
+}
+
+.word-nav {
+  margin-top: 22rpx;
+  display: flex;
+  gap: 16rpx;
+}
+
+.nav-btn {
+  flex: 1;
+  margin: 0;
+  border-radius: 28rpx;
+  font-size: calc(26rpx * var(--fs, 1));
+  line-height: 2.2;
+  font-weight: bold;
+}
+
+.nav-btn.ghost {
+  background: var(--mask);
+  color: var(--text);
+}
+
+.nav-btn::after { border: none; }
+
+.mark-row {
+  margin-top: 24rpx;
+  display: flex;
+  gap: 16rpx;
+}
+
+.mark-btn {
+  flex: 1;
+  margin: 0;
+  border-radius: 30rpx;
+  font-size: calc(26rpx * var(--fs, 1));
+  line-height: 2.2;
+}
+
+.mark-btn::after { border: none; }
+
+.mark-btn.remembered {
+  background: var(--primary-grad);
+  color: #fff;
+}
+
+.mark-btn.review {
+  background: var(--mask);
+  color: var(--text);
+}
+
+.finish-tip {
+  margin-top: 16rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+  color: var(--primary);
+}
+
+/* ===== 打卡记录 ===== */
+.prog-row {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 8rpx;
+  border-bottom: 1rpx solid var(--line);
+  font-size: calc(26rpx * var(--fs, 1));
+}
+
+.prog-row:last-child { border-bottom: none; }
+
+.prog-date { width: 160rpx; color: var(--sub); }
+
+.prog-word {
+  flex: 1;
+  color: var(--text);
+  font-weight: bold;
+}
+
+.prog-status {
+  font-size: calc(22rpx * var(--fs, 1));
+  padding: 4rpx 14rpx;
+  border-radius: 14rpx;
+}
+
+.prog-status.remembered {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.prog-status.review {
+  background: var(--mask);
+  color: var(--sub);
+}
+
+.prog-clear {
+  margin-top: 16rpx;
+  text-align: center;
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+/* ===== 语音朗读相关 ===== */
+.voice-switch {
+  flex-shrink: 0;
+  margin-left: 16rpx;
+  padding: 10rpx 18rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.28);
+  color: #fff;
+  font-size: calc(22rpx * var(--fs, 1));
+  font-weight: bold;
+}
+
+/* 单词可点击发音：加下划线提示 + 朗读中高亮 */
+.word-main {
+  position: relative;
+  border-bottom: 4rpx dashed var(--primary-soft);
+  transition: transform 0.15s;
+}
+
+.word-main:active {
+  transform: scale(0.96);
+}
+
+.word-main.speaking {
+  color: var(--primary-deep, #e07a95);
+  border-bottom-color: var(--primary);
+}
+
+.speak-btn.on {
+  background: var(--primary);
+}
+
+.speak-tip {
+  margin-top: 10rpx;
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}

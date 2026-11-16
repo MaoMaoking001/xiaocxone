@@ -1,0 +1,40 @@
+<!--pages/games/shuzijiyi/shuzijiyi.wxml 数字记忆 -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<view class="stat-bar cute-card">
+  <view class="stat">
+    <view class="stat-num">{{length}}</view>
+    <view class="stat-txt">当前位数</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{best}}</view>
+    <view class="stat-txt">🏆 最长位数</view>
+  </view>
+</view>
+
+<view wx:if="{{roundResult}}" class="round-result">{{roundResult}}</view>
+
+<!-- 显示阶段 -->
+<view wx:if="{{status === 'show'}}" class="stage-box">
+  <view class="big-num">{{target}}</view>
+  <view class="sub-txt">用心记住它！还有 {{left}} 秒隐藏 ⏳</view>
+</view>
+
+<!-- 输入阶段 -->
+<view wx:elif="{{status === 'input'}}" class="stage-box">
+  <view class="hide-emoji">🙈</view>
+  <input class="input-cute answer-input" type="number" focus maxlength="20"
+         placeholder="凭记忆输入刚才的数字"
+         bindinput="onInput" value="{{inputVal}}"
+         bindconfirm="submit" confirm-type="done" />
+  <button class="btn-cute submit-btn" bindtap="submit">确认答案</button>
+</view>
+
+<!-- 开始界面 -->
+<view wx:else class="stage-box">
+  <view class="hide-emoji">🔢</view>
+  <view class="sub-txt">短暂显示一串数字，回忆并输入\n位数会越来越长，看看你能记到几位！</view>
+  <button class="btn-cute submit-btn" bindtap="start">{{status === 'over' ? '再来一局' : '开始挑战'}}</button>
+</view>
+
+</view>

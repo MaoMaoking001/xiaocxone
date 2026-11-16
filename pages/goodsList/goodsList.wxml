@@ -1,0 +1,199 @@
+<!--pages/goodsList/goodsList.wxml 物品收纳列表（数据隔离 + 保质期 + 位置标签 + 统计） -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<!-- 保质期提醒卡：有待处理就常驻显示，逐条可忽略，点一条直接去编辑 -->
+<view wx:if="{{remindList.length > 0}}" class="cute-card remind-card">
+  <view class="remind-head">
+    <text class="remind-title">⏰ 保质期提醒</text>
+    <text class="remind-set" catchtap="goRemindSetting">保质期提醒设置</text>
+  </view>
+  <view class="remind-sum">
+    <text wx:if="{{remindExpired > 0}}" class="remind-sum-i danger">{{remindExpired}} 件已过期</text>
+    <text wx:if="{{remindSoon > 0}}" class="remind-sum-i warn">{{remindSoon}} 件即将到期</text>
+  </view>
+  <view wx:for="{{remindList}}" wx:key="_id" class="remind-row">
+    <view class="remind-main" bindtap="openRemindItem" data-id="{{item._id}}">
+      <view class="remind-name-row">
+        <text class="remind-name">{{item.name}}</text>
+        <text class="remind-tag {{item.status}}">{{item.status === 'expired' ? '已过期' : '临期'}}</text>
+      </view>
+      <view class="remind-meta">到期日 {{item.expiryDate}} · {{item.text}}</view>
+    </view>
+    <text class="remind-ignore" catchtap="ignoreRemind" data-id="{{item._id}}">忽略</text>
+  </view>
+  <view class="remind-foot">
+    <text wx:if="{{remindMore > 0}}" class="remind-more" bindtap="viewRemindAll">还有 {{remindMore}} 件待处理，查看全部 ›</text>
+    <text class="remind-ignore-all" bindtap="ignoreAllRemind">一键忽略</text>
+  </view>
+</view>
+
+<!-- 统计卡：三个数字都可点筛选；提醒设置收进卡片底部，不再单独占一行 -->
+<view class="cute-card stat-panel">
+  <view class="sp-row">
+    <view class="sp-col" hover-class="tap-shrink" bindtap="tapExpiryStat" data-t="">
+      <view class="sp-num">{{total}}</view>
+      <view class="sp-txt">总件数</view>
+    </view>
+    <view class="sp-divider"></view>
+    <view class="sp-col {{expiryFilter === 'soon' ? 'on' : ''}}" hover-class="tap-shrink" bindtap="tapExpiryStat" data-t="soon">
+      <view class="sp-num soon">{{soonCount}}</view>
+      <view class="sp-txt">即将过期</view>
+    </view>
+    <view class="sp-divider"></view>
+    <view class="sp-col {{expiryFilter === 'expired' ? 'on' : ''}}" hover-class="tap-shrink" bindtap="tapExpiryStat" data-t="expired">
+      <view class="sp-num expired">{{expiredCount}}</view>
+      <view class="sp-txt">已过期</view>
+    </view>
+  </view>
+  <view class="sp-foot">
+    <text class="sp-foot-txt">点数字可按到期状态筛选</text>
+    <text class="stat-set" catchtap="goRemindSetting">⚙ 提醒设置</text>
+  </view>
+</view>
+
+<!--搜索框 + 新增（扫码录入已移除）-->
+<view class="toolbar">
+  <view class="search-wrap">🔍
+    <input class="search-input" placeholder="搜名称 / 位置 / 备注" bindinput="onSearch" value="{{searchKey}}" confirm-type="search" />
+  </view>
+  <button class="btn-cute add-btn" bindtap="goAdd">＋ 新增</button>
+</view>
+
+<!-- 筛选摘要：只占一行。条件 chip 点 × 可单独移除，点右侧「筛选」打开面板 -->
+<view class="filter-summary">
+  <scroll-view scroll-x class="fs-main">
+    <view wx:for="{{filterChips}}" wx:key="id" class="fs-chip"
+          bindtap="removeFilterItem" data-key="{{item.key}}" data-value="{{item.value}}">
+      <text class="fs-chip-txt">{{item.label}}</text>
+      <text class="fs-chip-x">×</text>
+    </view>
+    <view wx:if="{{!hasFilter}}" class="fs-empty">全部物品</view>
+  </scroll-view>
+  <view class="fs-open" bindtap="openFilter">
+    筛选<text wx:if="{{filterCount}}" class="fs-count">{{filterCount}}</text>
+  </view>
+</view>
+
+<view wx:if="{{sortKey === 'expiry'}}" class="sort-tip">按到期日排序时只显示填写了保质期的物品</view>
+
+<!-- 批量添加入口已移除：只用「新增物品」页里的批量模式，避免入口重复 -->
+
+<!--物品卡片列表-->
+<view wx:for="{{goodsList}}" wx:key="_id" class="cute-card goods-card {{item.inactive ? 'inactive' : ''}}">
+  <!-- 整卡点击进编辑页：列表里不再需要常驻两个按钮才找得到入口 -->
+  <view class="goods-head" hover-class="card-hover" bindtap="goEdit" data-id="{{item._id}}">
+    <image wx:if="{{item.fileID}}" src="{{item.fileID}}" class="goods-img" mode="aspectFill"
+           binderror="onImgError" data-id="{{item._id}}" />
+    <view wx:else class="goods-img img-empty">{{item.icon}}</view>
+    <view class="goods-main">
+      <view class="goods-name-row">
+        <text class="goods-name">{{item.name}}</text>
+        <text class="tag-cute {{item.catClass}}">{{item.category}}</text>
+        <text wx:if="{{item.qtyText}}" class="tag-qty">{{item.qtyText}}</text>
+        <text wx:if="{{item.statusText}}" class="tag-status">{{item.statusText}}</text>
+        <text wx:if="{{item.expiryTag && item.expiryStatus === 'expired'}}" class="tag-expired">{{item.expiryTag}}</text>
+        <text wx:elif="{{item.expiryTag && item.expiryStatus === 'soon'}}" class="tag-soon">{{item.expiryTag}}</text>
+      </view>
+      <!-- 第二行：位置在左（太长自己省略），到期日在右（固定不换行） -->
+      <view class="goods-line">
+        <text class="goods-place {{item.placeLine ? '' : 'empty'}}">{{item.placeLine || '未填写位置'}}</text>
+        <text wx:if="{{item.expiryDate}}" class="goods-expiry {{item.expiryStatus}}">{{item.expiryDate}} 到期</text>
+      </view>
+      <!-- 第三行：购买日 · 价格 · 存放天数（JS 里已拼成一句） -->
+      <view wx:if="{{item.metaText}}" class="goods-sub">{{item.metaText}}</view>
+    </view>
+    <!-- 操作：右侧竖排文字按钮，不占整行；catchtap 阻止冒泡到整卡点击 -->
+    <view class="goods-actions">
+      <view class="act-btn" hover-class="tap-shrink" catchtap="goEdit" data-id="{{item._id}}">编辑</view>
+      <view class="act-btn warn" hover-class="tap-shrink" catchtap="delItem" data-id="{{item._id}}">删除</view>
+    </view>
+  </view>
+  <!-- 备注通栏：放在右列里会把缩略图和文字的高度差拉大，单独一行最多两行省略 -->
+  <view wx:if="{{item.remark}}" class="goods-remark" bindtap="goEdit" data-id="{{item._id}}">{{item.remark}}</view>
+</view>
+
+<!--空状态-->
+<view wx:if="{{isEmpty && !loading}}" class="empty-box">
+  <view class="empty-icon">🧺</view>
+  <view class="empty-txt">{{(searchKey || filterText !== '全部物品' || sortKey === 'expiry') ? '没有符合条件的物品～' : '空空如也，快去收纳第一件物品吧'}}</view>
+  <!-- 有条件的空列表要给出口，否则用户只能自己猜是哪个条件卡住了 -->
+  <view wx:if="{{searchKey || filterCount}}" class="empty-actions">
+    <view wx:if="{{searchKey}}" class="empty-btn" hover-class="tap-shrink" bindtap="clearSearch">清除搜索词</view>
+    <view wx:if="{{filterCount}}" class="empty-btn" hover-class="tap-shrink" bindtap="resetFilter">清除全部筛选</view>
+  </view>
+</view>
+
+<!--加载提示-->
+<view wx:if="{{loading}}" class="state-tip">加载中…</view>
+<view wx:elif="{{!hasMore && goodsList.length > 0}}" class="state-tip">— 到底啦，没有更多了 —</view>
+
+<!-- ============ 筛选面板（底部弹层）============ -->
+<view wx:if="{{filterOpen}}" class="sheet-mask" bindtap="closeFilter"></view>
+<view class="sheet {{filterOpen ? 'open' : ''}}">
+  <view class="sheet-head">
+    <text class="sheet-title">筛选与排序</text>
+    <text class="sheet-close" bindtap="closeFilter">收起</text>
+  </view>
+
+  <scroll-view scroll-y class="sheet-body">
+    <!-- 位置：一条路径，可搜索、可直接输入，也可以点最近用过的 -->
+    <view class="sheet-sec">
+      <view class="sec-title">位置<text class="sec-sub">长按候选可删除</text></view>
+      <!-- 输入框 + 清除：并排一行，清除按钮永远紧挨输入框右侧，不会跑到看不见的地方 -->
+      <view class="draft-input-row">
+        <input class="input-cute" value="{{draftPath}}" bindinput="onDraftPath"
+               placeholder="输入路径，如 寝室/衣柜/第二层" confirm-type="done" />
+        <view wx:if="{{draftPath}}" class="draft-clear" hover-class="tap-shrink"
+              bindtap="clearDraftPath">清除</view>
+      </view>
+      <!-- 候选改成换行排列（和下面的「类型 / 保质期」一致），全部选得到，
+           不用再横向滑动；某个候选特别长时会被截断成省略号 -->
+      <view wx:if="{{placeOptions.length > 0}}" class="chip-wrap place-chips">
+        <view wx:for="{{placeOptions}}" wx:key="*this"
+              class="chip place-chip {{draftPath === item ? 'active' : ''}}"
+              hover-class="tap-shrink"
+              bindtap="pickDraftPath" bindlongpress="delPlacePath" data-path="{{item}}">{{item}}</view>
+      </view>
+      <view wx:else class="chip-empty">还没有常用位置，直接输入即可</view>
+    </view>
+
+    <!-- 类型：多选，长按可删除（删除会把在用的物品迁移到「其他」） -->
+    <view class="sheet-sec">
+      <view class="sec-title">类型<text class="sec-sub">可多选 · 长按改名或删除</text></view>
+      <view class="chip-wrap">
+        <view wx:for="{{catOptions}}" wx:key="name"
+              class="chip {{item.on ? 'active' : ''}}"
+              bindtap="toggleDraftCat" bindlongpress="longPressCategory"
+              data-cat="{{item.name}}">{{item.name}}</view>
+        <view class="chip new" bindtap="addCategoryInline">＋ 新建</view>
+      </view>
+    </view>
+
+    <!-- 到期 -->
+    <view class="sheet-sec">
+      <view class="sec-title">保质期</view>
+      <view class="chip-wrap">
+        <view class="chip {{draftExpiry === '' ? 'active' : ''}}" bindtap="setDraftExpiry" data-t="">全部</view>
+        <view class="chip {{draftExpiry === 'soon' ? 'active' : ''}}" bindtap="setDraftExpiry" data-t="soon">即将过期</view>
+        <view class="chip {{draftExpiry === 'expired' ? 'active' : ''}}" bindtap="setDraftExpiry" data-t="expired">已过期</view>
+      </view>
+    </view>
+
+    <!-- 排序 -->
+    <view class="sheet-sec">
+      <view class="sec-title">排序</view>
+      <view class="chip-wrap">
+        <view wx:for="{{sortLabels}}" wx:key="*this"
+              class="chip {{draftSortIndex === index ? 'active' : ''}}"
+              bindtap="setDraftSort" data-i="{{index}}">{{item}}</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="sheet-foot">
+    <view class="sheet-reset" bindtap="resetFilter">重置</view>
+    <view class="sheet-apply" bindtap="applyFilter">应用</view>
+  </view>
+</view>
+
+</view>

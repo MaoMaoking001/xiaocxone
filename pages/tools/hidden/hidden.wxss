@@ -1,0 +1,74 @@
+/* pages/tools/hidden/hidden.wxss 隐藏工具管理 */
+
+.hero {
+  background: var(--primary-grad, linear-gradient(135deg, #ff8fab, #ffb3c6));
+  box-shadow: 0 8rpx 30rpx var(--primary-mid, rgba(255, 143, 171, 0.35));
+}
+
+.tool-row {
+  display: flex;
+  align-items: center;
+  padding: 22rpx 4rpx;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.tool-row:last-child {
+  border-bottom: none;
+}
+
+.tool-ico {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(36rpx * var(--fs, 1));
+  flex-shrink: 0;
+}
+
+.tool-main {
+  flex: 1;
+  min-width: 0;
+  margin: 0 18rpx;
+}
+
+.tool-name {
+  font-size: calc(28rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+}
+
+.tool-desc {
+  margin-top: 4rpx;
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.tool-btn {
+  flex-shrink: 0;
+  padding: 12rpx 24rpx;
+  border-radius: 999rpx;
+  background: var(--primary, #ff8fab);
+  color: #fff;
+  font-size: calc(24rpx * var(--fs, 1));
+  font-weight: bold;
+}
+
+.tool-btn.ghost {
+  background: var(--mask);
+  color: var(--sub);
+}
+
+.restore-all {
+  margin-top: 20rpx;
+  text-align: center;
+  font-size: calc(25rpx * var(--fs, 1));
+  color: var(--primary, #ff8fab);
+  padding: 14rpx 0;
+}
+
+.footer-tip {
+  margin-top: 36rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+}

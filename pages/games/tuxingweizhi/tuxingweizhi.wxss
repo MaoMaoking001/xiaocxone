@@ -1,0 +1,122 @@
+@import "../../../styles/game.wxss";
+
+/* pages/games/tuxingweizhi/tuxingweizhi.wxss */
+
+.timer {
+  text-align: center;
+  margin-top: 30rpx;
+  font-size: calc(28rpx * var(--fs, 1));
+  color: var(--butter);
+  font-weight: bold;
+}
+
+/* ===== 棋盘：正方形格子，整体也是正方形 =====
+   格子宽度用百分比，padding-bottom 用同一个百分比
+   （padding 百分比按容器宽度计算）⇒ 宽 = 高 ===== */
+.grid {
+  margin-top: 30rpx;
+}
+
+.grid-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cell-box {
+  position: relative;
+  height: 0;
+}
+
+.gcell {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 20rpx;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+/* ===== 本关难度信息 ===== */
+.info-row {
+  margin-top: 18rpx;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14rpx;
+}
+
+.info-item {
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  font-size: calc(23rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.info-strong {
+  font-weight: bold;
+  color: var(--primary-deep, #e07a95);
+}
+
+/* ===== 三个阶段进度 ===== */
+.stage-row {
+  margin-top: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+}
+
+.stage-pill {
+  padding: 8rpx 22rpx;
+  border-radius: 999rpx;
+  background: var(--mask);
+  color: var(--sub);
+  font-size: calc(23rpx * var(--fs, 1));
+}
+
+.stage-pill.on {
+  background: var(--primary-grad, linear-gradient(135deg, #ff8fab, #ffb3c6));
+  color: #fff;
+  font-weight: bold;
+}
+
+.stage-arrow {
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.gcell:active {
+  transform: scale(0.95);
+}
+
+.gcell.on {
+  background: var(--primary-grad, linear-gradient(135deg, #ff8fab, #ffb3c6));
+}
+
+.gcell.wrong {
+  background: rgba(255, 100, 100, 0.6);
+}
+
+.tip-line {
+  margin-top: 10rpx;
+  font-size: calc(22rpx * var(--fs, 1));
+}
+
+/* ===== 本页与公共样式的差异（公共部分在 styles/game.wxss） ===== */
+.stat-num {
+  font-size: calc(40rpx * var(--fs, 1));
+}
+.tip {
+  text-align: center;
+  margin: 24rpx 0;
+  color: var(--primary);
+  font-weight: bold;
+}

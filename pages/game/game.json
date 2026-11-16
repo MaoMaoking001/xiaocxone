@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "记忆小游戏",
+  "usingComponents": {
+    "app-icon": "/components/app-icon/index"
+  }
+}

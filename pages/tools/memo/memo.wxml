@@ -1,0 +1,133 @@
+<!--pages/tools/memo/memo.wxml 备忘录（以备忘为主，心情为可选附加） -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<!-- ① 写备忘：页面主角 -->
+<view class="cute-card write-card">
+  <view class="write-head">
+    <text class="write-title">{{editingId ? '✏️ 编辑备忘' : '✍️ 记一笔'}}</text>
+    <text wx:if="{{editingId}}" class="write-cancel" bindtap="cancelEdit">取消编辑</text>
+    <text wx:else class="write-date">{{today}}</text>
+  </view>
+
+  <input class="input-cute title-input" placeholder="标题（选填）"
+         value="{{title}}" bindinput="onTitle" maxlength="30" />
+
+  <textarea class="input-cute memo-input" placeholder="想到什么、要做什么，随手写下来…（必填）"
+            value="{{content}}" bindinput="onInput" maxlength="500" auto-height />
+
+  <!-- 心情是次要选项：默认收起，不抢备忘的重点 -->
+  <view class="mood-toggle" bindtap="toggleMoodPanel"
+        style="{{selectedMood ? 'background:' + selectedMoodColor + '26;color:' + selectedMoodColor : ''}}">
+    <text class="mood-toggle-txt">{{selectedMood ? selectedMoodEmoji + ' ' + selectedMoodLabel : '🌤️ 顺手记个心情（选填）'}}</text>
+    <text class="mood-toggle-arrow">{{moodPanelOpen ? '收起 ▲' : '展开 ▼'}}</text>
+  </view>
+
+  <view wx:if="{{moodPanelOpen}}" class="mood-panel">
+    <view class="mood-grid">
+      <view wx:for="{{displayMoods}}" wx:key="key"
+            class="mood-item {{selectedMood === item.key ? 'active' : ''}}"
+            style="{{selectedMood === item.key ? 'background:' + item.color + ';border-color:' + item.color + ';color:#fff;' : ''}}"
+            bindtap="pickMood" data-k="{{item.key}}">
+        <view class="mood-emoji">{{item.emoji}}</view>
+        <view class="mood-label">{{item.label}}</view>
+      </view>
+    </view>
+
+    <view class="mood-more" bindtap="toggleMoods">
+      {{moodExpanded ? '收起 ▲（只看常用 8 个）' : '展开全部 ' + moods.length + ' 个表情 ▼'}}
+    </view>
+  </view>
+
+  <button class="btn-cute save-btn" bindtap="saveAll">{{editingId ? '保存修改' : '✨ 存进备忘录'}}</button>
+</view>
+
+<!-- ② 备忘列表：紧跟写入口，一眼就能看到 -->
+<view class="list-head">
+  <text class="list-title">我的备忘</text>
+  <text class="list-count">{{memos.length > 0 ? memos.length + ' 条' : '还没有'}}</text>
+</view>
+
+<block wx:if="{{memos.length > 0}}">
+  <view class="cute-card memo-item {{editingId === item.id ? 'editing' : ''}}" wx:for="{{memos}}" wx:key="id"
+        bindtap="edit" bindlongpress="del" data-id="{{item.id}}">
+    <view wx:if="{{item.title}}" class="memo-title">{{item.title}}</view>
+    <view class="memo-content">{{item.content}}</view>
+    <view class="memo-foot">
+      <text class="memo-time">{{item.updateTime}}</text>
+      <view wx:if="{{item.mood}}" class="memo-mood"
+            style="background:{{item.moodColor}}26;color:{{item.moodColor}}">{{item.moodEmoji}} {{item.moodLabel}}</view>
+    </view>
+  </view>
+</block>
+
+<view wx:else class="empty-box">
+  <view class="empty-icon">☁️</view>
+  <view class="empty-txt">还没有备忘，想到什么就先记下来～</view>
+</view>
+
+<!-- ③ 心情日历：次要功能，默认收起 -->
+<view class="cute-card cal-card">
+  <view class="cal-toggle" bindtap="toggleCal">
+    <view class="cal-toggle-main">
+      <text class="cal-toggle-title">📅 心情日历</text>
+      <text class="cal-toggle-sub">本月记了 {{monthCount}} 次</text>
+    </view>
+    <text class="cal-toggle-arrow">{{calOpen ? '收起' : '展开'}}</text>
+  </view>
+
+  <view wx:if="{{calOpen}}" class="cal-body">
+    <view class="cal-head">
+      <view class="cal-nav" bindtap="prevMonth">‹</view>
+      <view class="cal-title" bindtap="goCurrentMonth">{{monthLabel}}</view>
+      <view class="cal-nav" bindtap="nextMonth">›</view>
+    </view>
+    <view class="sub-txt cal-hint">同一天可以记多次 · 点某一天查看当天记录</view>
+
+    <view class="cal-week">
+      <view wx:for="{{weekdays}}" wx:key="*this" class="wk-cell">{{item}}</view>
+    </view>
+    <view class="cal-grid">
+      <block wx:for="{{calDays}}" wx:key="key">
+        <view wx:if="{{item.blank}}" class="cal-cell blank"></view>
+        <view wx:else class="cal-cell {{item.isToday ? 'today' : ''}} {{item.isSelected ? 'selected' : ''}} {{item.count > 0 ? 'has' : ''}}"
+              data-date="{{item.date}}" bindtap="onCalTap">
+          <view class="cal-day">{{item.dayNum}}</view>
+          <view wx:if="{{item.count > 0}}" class="cal-emojis">
+            <text wx:for="{{item.emojis}}" wx:for-item="em" wx:key="*this" class="cal-emoji">{{em}}</text>
+          </view>
+          <view wx:if="{{item.count > 3}}" class="cal-count">+{{item.count - 3}}</view>
+          <view wx:elif="{{item.count > 1}}" class="cal-count">{{item.count}} 条</view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 选中这一天的全部记录 -->
+    <view class="day-panel">
+      <view class="day-head">
+        <text class="day-title">{{selectedDate}}</text>
+        <text class="day-count">{{dayList.length}} 条心情</text>
+      </view>
+
+      <block wx:if="{{dayList.length > 0}}">
+        <view class="mood-row" wx:for="{{dayList}}" wx:key="id">
+          <view class="mood-row-emoji" style="background:{{item.info.color}}26">{{item.info.emoji}}</view>
+          <view class="mood-row-main">
+            <view class="mood-row-title">
+              {{item.info.label}}
+              <text class="mood-row-time">{{item.time}}</text>
+            </view>
+            <view wx:if="{{item.note}}" class="mood-row-note">{{item.note}}</view>
+          </view>
+          <view class="mood-row-del" catchtap="delMood" data-id="{{item.id}}">×</view>
+        </view>
+      </block>
+      <view wx:else class="day-empty">这一天还没有心情记录哦～</view>
+    </view>
+
+    <view class="cal-clear" bindtap="clearMood">清空全部心情 🧹</view>
+  </view>
+</view>
+
+<view class="footer-tip">点击备忘可编辑 · 长按可删除</view>
+
+</view>

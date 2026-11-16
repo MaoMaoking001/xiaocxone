@@ -1,0 +1,91 @@
+<!--pages/games/shudu/shudu.wxml 数独 · 支持 4×4 / 6×6 / 9×9 三种规格 -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<view class="hero">
+  <view class="hero-emoji">🟩</view>
+  <view class="hero-text">
+    <view class="hero-title">数独</view>
+    <view class="hero-sub">随便填，填满后统一校验，错了会标红告诉你～</view>
+  </view>
+</view>
+
+<!-- 规格 + 难度选择 -->
+<view class="option-row">
+  <view class="option-group">
+    <view class="opt-label">规格</view>
+    <view class="opt-btns">
+      <view wx:for="{{sizeOptions}}" wx:key="*this"
+            class="opt-btn {{size === item ? 'active' : ''}}"
+            bindtap="setSize" data-n="{{item}}">{{item}}×{{item}}</view>
+    </view>
+  </view>
+  <view class="option-group">
+    <view class="opt-label">难度</view>
+    <view class="opt-btns">
+      <view wx:for="{{difficulties}}" wx:key="diff"
+            class="opt-btn {{difficulty === item.diff ? 'active' : ''}}"
+            bindtap="setDifficulty" data-d="{{item.diff}}">{{item.label}}</view>
+    </view>
+  </view>
+</view>
+
+<view class="stats-row">
+  <view class="stat">
+    <view class="stat-num primary">{{sizeLabel}}</view>
+    <view class="stat-label">规格</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{difficultyLabel}}</view>
+    <view class="stat-label">难度</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{seconds}}s</view>
+    <view class="stat-label">用时</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num butter">{{mistakes}}</view>
+    <view class="stat-label">错误格</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num mint">💡 {{hintsLeft}}/{{hintTotal}}</view>
+    <view class="stat-label">提示</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num mint">🏆 {{bestLabel}}</view>
+    <view class="stat-label">最高</view>
+  </view>
+</view>
+
+<!-- 数独盘：box 边框 / 字号都跟着 size 走 -->
+<view class="sudoku-board" style="font-size:{{fontSize}}rpx;">
+  <view wx:for="{{board}}" wx:for-index="r" wx:for-item="row" wx:key="r" class="sudoku-row">
+    <view wx:for="{{row}}" wx:for-index="c" wx:for-item="cell" wx:key="c"
+          class="sudoku-cell {{cell.given ? 'is-given' : ''}} {{cell.err ? 'is-err' : ''}} {{cell.hint ? 'is-hint' : ''}} {{selectedRow === r && selectedCol === c ? 'is-sel' : ''}} {{cell.value && !cell.given ? 'is-user' : ''}} {{r !== size - 1 && (r + 1) % boxRow === 0 ? 'bot-b' : ''}} {{c !== size - 1 && (c + 1) % boxCol === 0 ? 'right-b' : ''}} {{r === size - 1 ? 'last-bot' : ''}} {{c === size - 1 ? 'last-right' : ''}}"
+          bindtap="selectCell" data-r="{{r}}" data-c="{{c}}">
+      {{cell.value || ''}}
+    </view>
+  </view>
+</view>
+
+<!-- 数字键盘：根据 size 动态展示 1..N + 清除 -->
+<view class="num-pad num-pad-{{size}}" wx:if="{{selected}}">
+  <view wx:for="{{numPad}}" wx:key="*this"
+        class="num-btn" bindtap="fillNum" data-n="{{item}}">{{item}}</view>
+  <view class="num-btn clear" bindtap="clearCell">⌫</view>
+</view>
+
+<view wx:if="{{won}}" class="win-box">
+  <view class="win-emoji">🎉</view>
+  <view class="win-title">完成啦！</view>
+  <view class="win-sub">{{sizeLabel}} · 用时 {{seconds}} 秒，错误 {{mistakes}} 次{{bestNew ? ' · 🏆 新纪录！' : ''}}</view>
+</view>
+
+<view class="btn-row">
+  <button class="btn-cute" bindtap="newGame">🎲 新一题</button>
+  <button class="btn-cute hint-btn" bindtap="useHint">💡 提示（{{hintsLeft}}）</button>
+  <button class="btn-cute check-btn" bindtap="checkBoard">🔍 检查错误</button>
+</view>
+
+<view class="footer-tip">难度越高，初始数字越少、提示次数越少（简单 5 次 → 普通 4 次 → 困难 2 次 → 地狱 1 次）</view>
+
+</view>

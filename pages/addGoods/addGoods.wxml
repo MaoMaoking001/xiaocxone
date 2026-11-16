@@ -1,0 +1,149 @@
+<!--pages/addGoods/addGoods.wxml 新增/编辑物品 + 批量添加
+
+  字段全部交给 components/goods-fields 渲染，单条和批量共用同一个组件，
+  所以这个文件里没有重复的输入框。加字段请改组件那边。 -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<!-- 顶部模式切换 -->
+<view wx:if="{{!form._id}}" class="mode-tabs">
+  <view class="mode-tab {{mode === 'single' ? 'active' : ''}}" hover-class="tap-shrink" bindtap="switchMode" data-m="single">单条添加</view>
+  <view class="mode-tab {{mode === 'batch' ? 'active' : ''}}" hover-class="tap-shrink" bindtap="switchMode" data-m="batch">批量添加</view>
+</view>
+
+<!-- ============ 单条模式 ============ -->
+<block wx:if="{{mode === 'single'}}">
+<view class="cute-card">
+  <goods-fields
+    value="{{form}}"
+    show-category show-position show-status
+    category-list="{{categoryList}}"
+    paths="{{paths}}"
+    today="{{today}}"
+    bind:change="onSinglePatch"
+    bind:tapimage="chooseImg"
+    bind:newcategory="addCategorySingle"
+    bind:newplace="newPlaceSingle" />
+</view>
+
+<button class="btn-cute submit-btn" hover-class="btn-hover" bindtap="submitSingle">{{form._id ? '💾 保存修改' : '✨ 收纳这件物品'}}</button>
+</block>
+
+<!-- ============ 批量模式：多条目按顺序表单，一行一件 ============ -->
+<block wx:elif="{{mode === 'batch'}}">
+
+<!-- 本次批量录入的统一归属：三种模式任选，下面新增的每一条自动复用 -->
+<view class="cute-card target-card">
+  <view class="target-title">🎯 本次批量录入归属</view>
+
+  <view class="bind-modes">
+    <view class="bind-mode {{batchBindMode === 'category' ? 'active' : ''}}" hover-class="tap-shrink" bindtap="setBindMode" data-m="category">
+      <view class="bind-mode-ico">🏷️</view>
+      <view class="bind-mode-txt">统一分类</view>
+    </view>
+    <view class="bind-mode {{batchBindMode === 'position' ? 'active' : ''}}" hover-class="tap-shrink" bindtap="setBindMode" data-m="position">
+      <view class="bind-mode-ico">📍</view>
+      <view class="bind-mode-txt">统一位置</view>
+    </view>
+    <view class="bind-mode {{batchBindMode === 'both' ? 'active' : ''}}" hover-class="tap-shrink" bindtap="setBindMode" data-m="both">
+      <view class="bind-mode-ico">🔗</view>
+      <view class="bind-mode-txt">分类 + 位置</view>
+    </view>
+  </view>
+
+  <!-- ① ③：统一分类（类型本身也能现场新建，点右边「＋」） -->
+  <view wx:if="{{batchBindMode !== 'position'}}" class="form-row">
+    <view class="form-label">分类</view>
+    <picker class="fr-ctl" bindchange="onBatchCategoryChange" value="{{batchCategoryIndex}}" range="{{categoryList}}">
+      <view class="input-cute picker-value">
+        {{categoryList[batchCategoryIndex]}}
+        <text class="cell-arrow">›</text>
+      </view>
+    </picker>
+    <view class="add-mini-btn" hover-class="tap-shrink" bindtap="addCategoryBatch">＋</view>
+  </view>
+
+  <!-- ② ③：统一位置（一条路径，可只写一级，不必逐级建树；右边「＋」新建路径） -->
+  <view wx:if="{{batchBindMode !== 'category'}}" class="form-row">
+    <view class="form-label">位置</view>
+    <view class="fr-ctl path-input-row">
+      <input class="input-cute {{pathFocus ? 'is-focus' : ''}}" value="{{batchLocationPath}}"
+             placeholder="如：寝室/衣柜/第二层（只写一级也行）"
+             bindinput="onBatchPath" bindfocus="onBatchPathFocus" bindblur="onBatchPathBlur" />
+      <view class="add-mini-btn" hover-class="tap-shrink" bindtap="newPlaceBatch">＋</view>
+    </view>
+  </view>
+
+  <view class="target-tip">
+    <block wx:if="{{batchBindMode === 'category'}}">
+      每一条都统一归到分类「{{categoryList[batchCategoryIndex]}}」（位置在下面逐条填写）
+    </block>
+    <block wx:elif="{{batchBindMode === 'position'}}">
+      每一条都统一归到位置「{{batchLocationPath || '还没填位置'}}」（分类在下面逐条选，不选算「其他」）
+    </block>
+    <block wx:else>
+      每一条都统一带上分类「{{categoryList[batchCategoryIndex]}}」· 位置「{{batchLocationPath || '还没填位置'}}」
+    </block>
+  </view>
+</view>
+
+<view class="batch-count">共 {{batchRows.length}} 条待添加 · 每条除名称外都可留空</view>
+
+<!-- 每一条：同一个表单组件；按归属模式决定这一条里要不要显示分类 / 位置 -->
+<view wx:for="{{batchRows}}" wx:for-item="row" wx:for-index="i" wx:key="key" class="cute-card batch-row-card">
+  <view class="row-head">
+    <view class="row-no">第 {{i + 1}} 件</view>
+    <view class="row-del" hover-class="tap-shrink" bindtap="delBatchRow" data-i="{{i}}">✕ 删除</view>
+  </view>
+
+  <goods-fields
+    value="{{row}}"
+    data-i="{{i}}"
+    show-category="{{batchBindMode === 'position'}}"
+    show-position="{{batchBindMode === 'category'}}"
+    allow-add-category="{{false}}"
+    category-list="{{categoryList}}"
+    paths="{{paths}}"
+    today="{{today}}"
+    bind:change="onRowPatch"
+    bind:tapimage="chooseRowImg"
+    bind:newplace="newPlaceRow" />
+</view>
+
+<view class="add-row-btn" hover-class="tap-shrink" bindtap="addBatchRow">＋ 新增一条</view>
+
+<!-- 结果：三个统计块并排，先看总数再看成败 -->
+<view wx:if="{{batchResult}}" class="cute-card result-card">
+  <view class="result-title">添加结果</view>
+  <view class="result-stats">
+    <view class="result-stat">
+      <view class="result-num total">{{batchResult.total}}</view>
+      <view class="result-txt">共提交</view>
+    </view>
+    <view class="result-stat">
+      <view class="result-num ok">{{batchResult.success}}</view>
+      <view class="result-txt">成功</view>
+    </view>
+    <view class="result-stat" wx:if="{{batchResult.failed.length > 0}}">
+      <view class="result-num fail">{{batchResult.failed.length}}</view>
+      <view class="result-txt">失败</view>
+    </view>
+  </view>
+  <view class="result-failed" wx:if="{{batchResult.failed.length > 0}}">
+    <view wx:for="{{batchResult.failed}}" wx:key="idx" class="result-line">
+      第{{item.idx}}条：{{item.name}}（{{item.reason}}）
+    </view>
+  </view>
+</view>
+
+<!-- 提交条：sticky 悬浮在底部，条目再多也不用滚到底 -->
+<view class="submit-dock">
+  <button class="btn-cute dock-btn" hover-class="btn-hover" bindtap="submitBatch"
+          disabled="{{submitting || batchRows.length === 0}}">
+    ✨ 一键添加 {{batchRows.length}} 条
+  </button>
+</view>
+
+<view class="footer-tip">全部填完后统一提交，数量默认 1 件；价格 / 购买时间 / 保质期 / 图片均可留空～</view>
+</block>
+
+</view>

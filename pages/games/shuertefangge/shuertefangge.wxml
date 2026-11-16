@@ -1,0 +1,60 @@
+<!--pages/games/shuertefangge/shuertefangge.wxml 舒尔特方格 -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<view class="hero">
+  <view class="hero-emoji">⏱️</view>
+  <view class="hero-text">
+    <view class="hero-title">舒尔特方格</view>
+    <view class="hero-sub">按 1 → {{size * size}} 的顺序依次点下去，越快越好</view>
+  </view>
+</view>
+
+<view class="size-row">
+  <view wx:for="{{sizes}}" wx:key="*this"
+        class="size-btn {{size === item ? 'active' : ''}}"
+        bindtap="setSize" data-n="{{item}}">{{item}}×{{item}}</view>
+</view>
+
+<view class="stat-row cute-card">
+  <view class="stat">
+    <view class="stat-num">{{secondsText}}s</view>
+    <view class="stat-txt">用时</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{next}}{{next > size * size ? '' : ' / ' + size * size}}</view>
+    <view class="stat-txt">下一个</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{wrong}}</view>
+    <view class="stat-txt">点错</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num mint">🏆 {{best}}</view>
+    <view class="stat-txt">最高</view>
+  </view>
+</view>
+
+<!-- 棋盘：每个格子等宽等高，整体是严格的正方形 -->
+<view wx:if="{{status !== 'ready'}}" class="board">
+  <view class="board-row" wx:for="{{rows}}" wx:for-item="row" wx:key="key"
+        style="margin-bottom:{{index < rows.length - 1 ? gapPct : 0}}%">
+    <view wx:for="{{row.list}}" wx:for-item="c" wx:key="num"
+          class="cell-box" style="width:{{cellPct}}%;padding-bottom:{{cellPct}}%">
+      <view class="cell {{c.done ? 'done' : ''}}" style="font-size:{{fontRpx}}rpx"
+            bindtap="tap" data-idx="{{c.idx}}" data-num="{{c.num}}">{{c.num}}</view>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{status === 'ready'}}" class="ready-box">
+  <view class="ready-emoji">👀</view>
+  <view class="sub-txt">用眼神扫过整个方格，按顺序找到数字并点击</view>
+</view>
+
+<view class="progress-tip" wx:if="{{status === 'playing'}}">已完成 {{percent}}%</view>
+
+<button class="btn-cute start-btn" bindtap="start">{{status === 'playing' ? '🔄 重新开始' : '开始挑战'}}</button>
+
+<view class="footer-tip">每天练 1 分钟，专注力看得见 🐰</view>
+
+</view>

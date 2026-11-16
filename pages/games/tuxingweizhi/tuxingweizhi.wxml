@@ -1,0 +1,66 @@
+<!--pages/games/tuxingweizhi/tuxingweizhi.wxml 图形位置记忆（3×3 → 4×4 → 5×5，共 18 关） -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<view class="stat-bar cute-card">
+  <view class="stat">
+    <view class="stat-num">{{stageName}}</view>
+    <view class="stat-txt">{{stageLevel}} / {{stageTotal}} 关</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{score}}</view>
+    <view class="stat-txt">分数</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{best}}</view>
+    <view class="stat-txt">🏆 最高</view>
+  </view>
+</view>
+
+<view wx:if="{{showHint}}" class="tip sub-txt">{{hint}}</view>
+
+<!-- 本关难度信息 -->
+<view wx:if="{{status === 'memorize' || status === 'recall'}}" class="info-row">
+  <view class="info-item">🎯 记住 <text class="info-strong">{{shapeCount}}</text> 个</view>
+  <view class="info-item">✅ 已找回 <text class="info-strong">{{correctCount}}</text>/{{shapeCount}}</view>
+  <view class="info-item">💗 容错 <text class="info-strong">{{missLeft}}</text>/{{allowMiss}}</view>
+  <view class="info-item">📍 总关卡 {{level + 1}}/{{totalLevel}}</view>
+</view>
+
+<!-- 棋盘：格子等宽等高，整体正方形（3×3 / 4×4 / 5×5） -->
+<view wx:if="{{status !== 'ready' && status !== 'over'}}" class="grid">
+  <view class="grid-row" wx:for="{{rows}}" wx:for-item="row" wx:key="key"
+        style="margin-bottom:{{index < rows.length - 1 ? gapPct : 0}}%">
+    <view wx:for="{{row.list}}" wx:for-item="c" wx:key="idx"
+          class="cell-box" style="width:{{cellPct}}%;padding-bottom:{{cellPct}}%">
+      <view class="gcell {{c.on ? (c.wrong ? 'wrong' : 'on') : ''}}"
+            style="font-size:{{fontRpx}}rpx"
+            bindtap="pick" data-idx="{{c.idx}}">{{c.on ? c.shape : ''}}</view>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{status === 'memorize'}}" class="timer">
+  ⏳ 还有 {{leftText}} 秒记忆
+</view>
+
+<!-- 进度：三个阶段 -->
+<view wx:if="{{status !== 'ready'}}" class="stage-row">
+  <view class="stage-pill {{size >= 3 ? 'on' : ''}}">3×3</view>
+  <view class="stage-arrow">›</view>
+  <view class="stage-pill {{size >= 4 ? 'on' : ''}}">4×4</view>
+  <view class="stage-arrow">›</view>
+  <view class="stage-pill {{size >= 5 ? 'on' : ''}}">5×5</view>
+</view>
+
+<!-- 开始界面 -->
+<view wx:if="{{status === 'ready'}}" class="ready-box">
+  <view class="ready-emoji">🟦</view>
+  <view class="sub-txt">记住亮起图形的位置，隐藏后还原～</view>
+  <view class="sub-txt tip-line">共 {{totalLevel}} 关：3×3 → 4×4 → 5×5，最多要记 20 个图形</view>
+  <view class="sub-txt tip-line">越往后记忆时间越短、容错次数越少，最后几关一次都不能错 😈</view>
+  <button class="btn-cute start-btn" bindtap="start">开始游戏</button>
+</view>
+
+<button wx:elif="{{status !== 'ready' && status !== 'over'}}" class="btn-cute restart-btn" bindtap="start">🔄 重新开始</button>
+
+</view>

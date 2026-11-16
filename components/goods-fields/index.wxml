@@ -1,0 +1,119 @@
+<!-- components/goods-fields/index.wxml
+     一件物品的所有输入字段。单条添加、批量添加的每一条都用它，
+     所以字段只在写这里一遍。
+     组件不改数据：所有输入都通过 triggerEvent('change', { patch }) 交给页面。
+
+     视觉约定（改样式前先看这里）：
+       · 标签不要放 emoji —— 彩色 emoji 会打乱主题色系，标签前的竖条就是装饰；
+       · 只有「名称」是必填，所以只有一个必填小圆点；
+       · 可留空的字段标签用 --sub 色且不加粗，一眼能分出主次；
+       · 输入框聚焦时切 .is-focus（input 没有 :focus 伪类，只能靠 focus 事件记字段名）。 -->
+<view class="gf">
+
+  <!-- 名称 + 图片上传（图片选填） -->
+  <view class="form-row">
+    <view class="form-label">名称<text class="req-dot"></text></view>
+    <view class="fr-ctl name-row">
+      <input class="input-cute name-input {{focusField === 'name' ? 'is-focus' : ''}}"
+             value="{{value.name}}" placeholder="给它起个名字吧～"
+             data-f="name" bindinput="onInput" bindfocus="onFocus" bindblur="onBlur" />
+      <view class="name-img" hover-class="tap-shrink" bindtap="tapImage">
+        <image wx:if="{{value.imgUrl}}" src="{{value.imgUrl}}" class="name-img-pic" mode="aspectFill" />
+        <view wx:else class="name-img-add">
+          <text class="name-img-plus">＋</text>
+          <text class="name-img-txt">{{value.uploading ? '上传中' : '图片'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分类（类型）：下拉里是默认类型 + 用户自己建的，点右边「＋」可以现场新建 -->
+  <view wx:if="{{showCategory}}" class="form-row">
+    <view class="form-label">分类</view>
+    <picker class="fr-ctl" bindchange="onCategory" value="{{categoryIndex}}" range="{{categoryList}}">
+      <view class="input-cute picker-value">
+        {{value.category || '点这里选分类'}}
+        <text class="cell-arrow">›</text>
+      </view>
+    </picker>
+    <view wx:if="{{allowAddCategory}}" class="add-mini-btn" hover-class="tap-shrink" bindtap="newCategory">＋</view>
+  </view>
+
+  <!-- 位置：一条路径，例如 寝室/衣柜/第二层；只写一级也可以，点「＋」可新建 -->
+  <view wx:if="{{showPosition}}" class="form-row top path-row">
+    <view class="form-label">位置</view>
+    <view class="fr-ctl">
+      <view class="path-input-row">
+        <input class="input-cute {{focusField === 'locationPath' ? 'is-focus' : ''}}"
+               value="{{value.locationPath}}"
+               placeholder="如：寝室/衣柜/第二层（只写一级也行）"
+               data-f="locationPath" bindinput="onInput" bindfocus="onFocus" bindblur="onBlur" />
+        <view class="add-mini-btn" hover-class="tap-shrink" bindtap="newPlace">＋</view>
+      </view>
+      <!-- 候选与提示放在同一个定高容器里，两者切换时这一行不会跳 -->
+      <view class="path-chip-wrap">
+        <scroll-view wx:if="{{paths.length > 0}}" scroll-x class="row-tags path-chips">
+          <view wx:for="{{paths}}" wx:key="*this"
+                class="tag-item {{value.locationPath === item ? 'active' : ''}}"
+                hover-class="tap-shrink"
+                bindtap="pickPath" data-path="{{item}}">{{item}}</view>
+        </scroll-view>
+        <view wx:else class="path-hint">填一次路径就会记住，下次直接点选</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 以下都可留空：标签弱化成 --sub 色，不抢主字段的注意力 -->
+  <!-- 价格 -->
+  <view class="form-row">
+    <view class="form-label opt">价格</view>
+    <input class="input-cute fr-ctl {{focusField === 'price' ? 'is-focus' : ''}}"
+           type="digit" value="{{value.price}}" placeholder="选填，例如 99.9"
+           data-f="price" bindinput="onInput" bindfocus="onFocus" bindblur="onBlur" />
+  </view>
+
+  <!-- 购买时间（不能选未来） -->
+  <view class="form-row">
+    <view class="form-label opt">购买时间</view>
+    <picker class="fr-ctl" mode="date" value="{{value.purchaseDate || today}}" end="{{today}}"
+            data-f="purchaseDate" bindchange="onInput">
+      <view class="input-cute picker-value">
+        {{value.purchaseDate || '点击选择（可不填）'}}
+        <text class="cell-arrow">›</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 保质期：不限制下限，早就过期的东西也要能记（列表页会标"已过期 N 天"）
+       点进去直接选日期，所以不再放「+6 个月 / +1 年」这类快捷按钮 -->
+  <view class="form-row">
+    <view class="form-label opt">保质期</view>
+    <picker class="fr-ctl" mode="date" value="{{value.expiryDate || today}}"
+            data-f="expiryDate" bindchange="onInput">
+      <view class="input-cute picker-value">
+        {{value.expiryDate || '点击选择（可不填）'}}
+        <text class="cell-arrow">›</text>
+      </view>
+    </picker>
+  </view>
+  <!-- 快捷档：以购买日（没填就用今天）为基准往后推，食品 / 美妆不用自己算日期。
+       日期 picker 点「取消」不会清空已选值，所以有值时额外给一个「清除」 -->
+  <view class="form-subrow quick-row">
+    <view class="quick-btn" hover-class="tap-shrink" bindtap="quickExpiry" data-m="3">+3 个月</view>
+    <view class="quick-btn" hover-class="tap-shrink" bindtap="quickExpiry" data-m="6">+6 个月</view>
+    <view class="quick-btn" hover-class="tap-shrink" bindtap="quickExpiry" data-m="12">+1 年</view>
+    <view wx:if="{{value.expiryDate}}" class="quick-btn ghost" hover-class="tap-shrink" bindtap="clearExpiry">清除</view>
+  </view>
+
+  <!-- 图片直接点图片位就能更换 / 移除（见 tapImage），不再额外放一行文字提示 -->
+
+  <!-- 备注 -->
+  <view class="form-row top">
+    <view class="form-label opt">备注</view>
+    <textarea class="input-cute area row-remark fr-ctl {{focusField === 'remark' ? 'is-focus' : ''}}"
+              value="{{value.remark}}" placeholder="选填，写点备注吧～"
+              auto-height maxlength="-1" data-f="remark" bindinput="onInput"
+              bindfocus="onFocus" bindblur="onBlur" />
+  </view>
+
+</view>

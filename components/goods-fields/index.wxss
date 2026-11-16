@@ -1,0 +1,269 @@
+/* components/goods-fields/index.wxss
+   表单布局样式。因为组件设置了 styleIsolation: 'apply-shared'，
+   页面 addGoods.wxss 里的 .form-row / .tag-item 等本来也能生效；
+   这里再放一份最小必要样式，保证这个组件被别的页面复用时也不会塌。 */
+
+.gf {
+  width: 100%;
+}
+
+/* 标签 + 控件同一行 */
+.form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 22rpx;
+}
+
+.form-row.top {
+  align-items: flex-start;
+}
+
+/* 标签：一小段竖条 + 文字，不再放 emoji（彩色 emoji 会打乱主题色系） */
+.form-row .form-label {
+  display: flex;
+  align-items: center;
+  width: 130rpx;
+  flex-shrink: 0;
+  margin-bottom: 0;
+  font-size: calc(24rpx * var(--fs, 1));
+  letter-spacing: 1rpx;
+  color: var(--text);
+  font-weight: bold;
+}
+
+.form-row .form-label::before {
+  content: '';
+  width: 6rpx;
+  height: 22rpx;
+  border-radius: 999rpx;
+  background: var(--primary);
+  margin-right: 10rpx;
+  flex-shrink: 0;
+}
+
+/* 可留空的字段：标签降为次要色、不加粗，并且不画竖条。
+   装饰越少，必填的「名称」越突出；padding 补上竖条原本占的宽度，标签才能对齐 */
+.form-row .form-label.opt {
+  color: var(--sub);
+  font-weight: normal;
+  padding-left: 16rpx;
+}
+
+.form-row .form-label.opt::before {
+  display: none;
+}
+
+/* 必填小圆点：全页只有「名称」有 */
+.req-dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: var(--primary);
+  margin-left: 8rpx;
+  flex-shrink: 0;
+}
+
+.form-row .input-cute {
+  margin-bottom: 0;
+}
+
+
+
+.fr-ctl {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 位置输入框 + 「＋」新建（和分类的加号一致） */
+.path-input-row {
+  display: flex;
+  align-items: center;
+}
+
+/* 输入框吃掉剩余宽度，加号按钮固定不收缩 */
+.path-input-row .input-cute {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 位置行下面是候选标签，整行是纵向排列；标签往下压半格，
+   才能和 88rpx 输入框里的文字对齐（否则会贴在框顶） */
+.path-row .form-label {
+  padding-top: 32rpx;
+}
+
+/* 位置：候选与提示共用一个定高容器，两者切换时这一行不会跳 */
+.path-chip-wrap {
+  position: relative;
+  min-height: 60rpx;
+  margin-top: 12rpx;
+}
+
+/* 右侧渐隐：暗示"还能继续往右滑"，否则横向 scroll-view 毫无提示 */
+.path-chip-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 44rpx;
+  height: 60rpx;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), var(--card));
+  pointer-events: none;
+}
+
+.path-chips {
+  height: 60rpx;
+}
+
+.path-chips .tag-item {
+  display: inline-block;
+  margin: 0 12rpx 10rpx 0;
+  flex-shrink: 0;
+  padding: 8rpx 20rpx;
+  font-size: calc(23rpx * var(--fs, 1));
+  border: 1rpx solid var(--line);
+}
+
+.path-chips .tag-item.active {
+  border-color: transparent;
+}
+
+.path-hint {
+  font-size: calc(21rpx * var(--fs, 1));
+  line-height: 60rpx;
+  color: var(--sub);
+}
+
+/* 附属行：快捷按钮 / 新建标签，缩进对齐到控件一侧 */
+.form-subrow {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin: -8rpx 0 22rpx 130rpx;
+}
+
+.form-subrow.quick-row {
+  display: flex;
+  margin-top: 0;
+}
+
+/* ===== 名称 + 图片 ===== */
+.name-row {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+.name-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.name-img {
+  width: 176rpx;
+  height: 176rpx;
+  border-radius: 22rpx;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--mask);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.name-img-pic {
+  width: 176rpx;
+  height: 176rpx;
+  border-radius: 22rpx;
+}
+
+.name-img-add {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+}
+
+.name-img-plus {
+  font-size: calc(48rpx * var(--fs, 1));
+  line-height: 1;
+  color: var(--primary);
+}
+
+.name-img-txt {
+  font-size: calc(20rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+/* ===== 位置标签 ===== */
+.row-tags {
+  white-space: nowrap;
+}
+
+.row-tags .tag-item {
+  display: inline-block;
+  margin: 0 14rpx 10rpx 0;
+  flex-shrink: 0;
+}
+
+.tag-item {
+  padding: 10rpx 22rpx;
+  border-radius: 999rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+  background: var(--mask);
+  color: var(--sub);
+}
+
+.tag-item.active {
+  background: var(--primary, #ff8fab);
+  color: #fff;
+  font-weight: bold;
+}
+
+.tag-item.new,
+.tag-item.new.active {
+  color: var(--primary-deep, #e07a95);
+  background: var(--primary-weak, rgba(255, 143, 171, 0.16));
+  font-weight: normal;
+}
+
+.tag-tip {
+  font-size: calc(21rpx * var(--fs, 1));
+  color: var(--sub);
+  margin-bottom: 14rpx;
+  line-height: 1.6;
+}
+
+/* 「＋」新建按钮统一用全局 .add-mini-btn（app.wxss）：
+   浅底 + 虚线边的次级样式，页面里只让主提交按钮用实心渐变 */
+
+/* ===== 保质期快捷按钮 ===== */
+.quick-row {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 14rpx;
+}
+
+.quick-btn {
+  flex: 1;
+  text-align: center;
+  padding: 12rpx 0;
+  border-radius: 18rpx;
+  background: var(--primary-weak, rgba(255, 143, 171, 0.14));
+  color: var(--primary-deep, #e07a95);
+  font-size: calc(22rpx * var(--fs, 1));
+}
+
+.quick-btn.ghost {
+  background: var(--mask);
+  color: var(--sub);
+}
+
+/* 图片已有时的"更换 / 移除"提示 */
+.row-img-tip {
+  color: var(--primary-deep, #e07a95);
+  font-size: calc(21rpx * var(--fs, 1));
+}

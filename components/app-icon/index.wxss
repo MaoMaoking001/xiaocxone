@@ -1,0 +1,29 @@
+/* components/app-icon/index.wxss 通用图标组件样式 */
+
+/* 方块容器：内容居中，超出裁掉（图片圆角和背景色才能贴合） */
+.ai-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* 图片铺满容器，具体由 mode 决定裁切还是留白 */
+.ai-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* emoji 走文字渲染，行高 1 让它垂直居中不偏 */
+.ai-txt {
+  line-height: 1;
+}
+
+/* 置灰：待开发工具这类占位卡片 */
+.ai-gray {
+  filter: grayscale(1);
+  opacity: 0.7;
+}

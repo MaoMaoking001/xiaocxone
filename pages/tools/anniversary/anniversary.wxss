@@ -1,0 +1,178 @@
+/* pages/tools/anniversary/anniversary.wxss */
+
+.form-label {
+  font-size: calc(26rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+  margin-bottom: 16rpx;
+}
+
+.form-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.form-head .form-label {
+  margin-bottom: 0;
+}
+
+.form-cancel {
+  font-size: calc(23rpx * var(--fs, 1));
+  color: var(--primary-deep, #e07a95);
+  text-decoration: underline;
+}
+
+.title-input {
+  margin-bottom: 20rpx;
+}
+
+.date-picker {
+  display: block;
+}
+
+.picker-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  box-sizing: border-box;
+}
+
+/* ===== 提醒频率 ===== */
+.unit-label {
+  margin: 24rpx 0 12rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.unit-row {
+  display: flex;
+  gap: 12rpx;
+}
+
+.unit-tab {
+  flex: 1;
+  text-align: center;
+  padding: 14rpx 0;
+  border-radius: 20rpx;
+  background: var(--mask);
+  font-size: calc(24rpx * var(--fs, 1));
+  color: var(--text);
+}
+
+.unit-tab.active {
+  background: var(--primary);
+  color: #fff;
+  font-weight: bold;
+}
+
+.unit-tab:active {
+  opacity: 0.85;
+}
+
+.interval-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+
+.interval-label {
+  font-size: calc(24rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.interval-input {
+  width: 150rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  padding: 0 12rpx;
+  text-align: center;
+}
+
+.add-btn {
+  width: 100%;
+  margin: 28rpx 0 0;
+  font-size: calc(28rpx * var(--fs, 1));
+  line-height: 2.6;
+  padding: 0;
+}
+
+/* ===== 纪念日卡片 ===== */
+.anniv-item {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  margin-bottom: 20rpx;
+}
+
+.anniv-item.today {
+  background: var(--primary-grad);
+}
+
+/* 正在编辑的那一条：描边提示 */
+.anniv-item.editing {
+  border: 3rpx solid var(--primary, #ff8fab);
+}
+
+.anniv-item.today .anniv-title,
+.anniv-item.today .anniv-sub,
+.anniv-item.today .days-num,
+.anniv-item.today .days-txt {
+  color: #fff;
+}
+
+.anniv-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  background: var(--mask);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(44rpx * var(--fs, 1));
+  flex-shrink: 0;
+}
+
+.anniv-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.anniv-title {
+  font-size: calc(30rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.anniv-sub {
+  margin-top: 6rpx;
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.anniv-days {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.days-num {
+  font-size: calc(44rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.days-txt {
+  margin-top: 4rpx;
+  font-size: calc(20rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.footer-tip {
+  margin-top: 32rpx;
+}

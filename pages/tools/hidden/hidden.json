@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "隐藏工具",
+  "usingComponents": {
+    "app-icon": "/components/app-icon/index"
+  }
+}

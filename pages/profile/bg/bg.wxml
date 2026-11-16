@@ -1,0 +1,61 @@
+<!--pages/profile/bg/bg.wxml 自定义背景设置 -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<view class="hero">
+  <view class="hero-emoji">🎨</view>
+  <view class="hero-text">
+    <view class="hero-title">自定义背景</view>
+    <view class="hero-sub">选一个最喜欢的颜色或图片吧～</view>
+  </view>
+</view>
+
+<!-- 预览 -->
+<view class="preview-card">
+  <view class="preview-label">当前背景预览</view>
+  <view class="preview-box" style="{{bgType === 'color' ? 'background:' + bgValue + ';' : ''}}{{bgType === 'image' ? 'background-image:url(' + bgValue + ');background-size:cover;background-position:center;' : ''}}">
+    <view wx:if="{{bgType === 'default'}}" class="preview-default">默认背景</view>
+    <view wx:else class="preview-tip">{{bgType === 'color' ? '纯色：' + bgValue : '背景图片'}}</view>
+  </view>
+</view>
+
+<!-- 预设色 -->
+<view class="cute-card">
+  <view class="form-label">🌸 预设可爱色</view>
+  <view class="preset-grid">
+    <view wx:for="{{presets}}" wx:key="name"
+          class="preset-item {{bgType === 'color' && bgValue === item.value ? 'active' : ''}}"
+          style="background:{{item.value}};"
+          bindtap="pickPreset" data-v="{{item.value}}">
+      <text wx:if="{{bgType === 'color' && bgValue === item.value}}" class="check-mark">✓</text>
+    </view>
+  </view>
+</view>
+
+<!-- 自定义颜色 -->
+<view class="cute-card">
+  <view class="form-label">🎨 自定义颜色</view>
+  <view class="custom-row">
+    <view class="custom-preview" style="background:{{customColor}};"></view>
+    <input class="input-cute color-input" placeholder="#ffffff" value="{{customColor}}" bindinput="onColorInput" />
+    <button class="btn-cute apply-btn" bindtap="applyCustomColor">应用</button>
+  </view>
+</view>
+
+<!-- 自定义图片 -->
+<view class="cute-card">
+  <view class="form-label">🖼 自定义背景图片</view>
+  <view class="img-row" bindtap="chooseImage">
+    <view wx:if="{{bgImage}}" class="img-preview" style="background-image:url({{bgImage}});"></view>
+    <view wx:else class="img-empty">
+      <view class="plus">＋</view>
+      <view class="sub">{{uploading ? '上传中…' : '点击选择图片'}}</view>
+    </view>
+  </view>
+</view>
+
+<!-- 恢复默认 -->
+<view class="reset-row">
+  <button class="btn-cute reset-btn" bindtap="reset">↺ 恢复默认背景</button>
+</view>
+
+</view>

@@ -1,0 +1,113 @@
+@import "../../../styles/game.wxss";
+
+/* pages/games/shuertefangge/shuertefangge.wxss 舒尔特方格 */
+
+.hero {
+  background: var(--primary-grad, linear-gradient(135deg, #ff8fab, #ffb3c6));
+  box-shadow: 0 8rpx 30rpx var(--primary-mid, rgba(255, 143, 171, 0.35));
+}
+
+/* 规格选择 */
+.size-row {
+  display: flex;
+  gap: 14rpx;
+  margin: 24rpx 0;
+}
+
+.size-btn {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  border-radius: 20rpx;
+  background: var(--card);
+  color: var(--sub);
+  font-size: calc(26rpx * var(--fs, 1));
+  box-shadow: var(--shadow);
+}
+
+.size-btn.active {
+  background: var(--primary, #ff8fab);
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 统计 */
+
+.stat-num.mint {
+  color: var(--mint);
+}
+
+/* 方格：正方形排版（每个格子等宽等高，棋盘整体也是正方形）
+   做法：格子宽度用百分比，padding-bottom 用同一个百分比
+   （padding 百分比按容器宽度计算 ⇒ 宽 = 高），
+   每行 space-between 自动分掉剩余间距，列间距与行间距同比例。 */
+.board {
+  margin: 28rpx 0;
+}
+
+.board-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cell-box {
+  position: relative;
+  height: 0;
+}
+
+.board .cell {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 16rpx;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: var(--text);
+  transition: all 0.15s;
+}
+
+.board .cell:active {
+  transform: scale(0.93);
+}
+
+.board .cell.done {
+  background: var(--primary-soft, #ffe9f0);
+  color: var(--primary-deep, #e07a95);
+  opacity: 0.7;
+}
+
+/* 开始 */
+
+.progress-tip {
+  text-align: center;
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.footer-tip {
+  margin-top: 28rpx;
+}
+
+/* ===== 本页与公共样式的差异（公共部分在 styles/game.wxss） ===== */
+.stat-row {
+  padding: 22rpx 0;
+}
+.stat-txt {
+  font-size: calc(21rpx * var(--fs, 1));
+}
+.ready-box {
+  padding: 80rpx 40rpx;
+}
+.ready-emoji {
+  font-size: calc(110rpx * var(--fs, 1));
+  margin-bottom: 20rpx;
+}
+.start-btn {
+  margin-top: 24rpx;
+}

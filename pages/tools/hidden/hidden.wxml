@@ -1,0 +1,47 @@
+<!--pages/tools/hidden/hidden.wxml 隐藏工具管理（独立页面） -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<view class="hero">
+  <view class="hero-emoji">🙈</view>
+  <view class="hero-text">
+    <view class="hero-title">隐藏工具</view>
+    <view class="hero-sub">被隐藏的工具只在这一页管理，首页不会再出现</view>
+  </view>
+</view>
+
+<!-- 已隐藏的工具 -->
+<view class="section-title">已隐藏 {{hiddenTools.length}} 个 🙈</view>
+<view wx:if="{{hiddenTools.length > 0}}" class="cute-card">
+  <view class="tool-row" wx:for="{{hiddenTools}}" wx:key="name">
+    <app-icon class="tool-ico" icon="{{item.icon}}" size="72rpx" radius="22rpx"
+              fs="calc(36rpx * var(--fs, 1))" bg="{{item.color}}" />
+    <view class="tool-main">
+      <view class="tool-name">{{item.name}}</view>
+      <view class="tool-desc">{{item.desc}}</view>
+    </view>
+    <view class="tool-btn" bindtap="restore" data-name="{{item.name}}">＋ 恢复</view>
+  </view>
+  <view class="restore-all" bindtap="restoreAll">全部恢复显示 ↺</view>
+</view>
+<view wx:else class="empty-box">
+  <view class="empty-icon">🌷</view>
+  <view class="empty-txt">还没有隐藏任何工具～</view>
+</view>
+
+<!-- 当前在首页显示的工具：可以直接在这里隐藏 -->
+<view class="section-title">首页显示中 {{visibleTools.length}} 个 🌸</view>
+<view class="cute-card">
+  <view class="tool-row" wx:for="{{visibleTools}}" wx:key="name">
+    <app-icon class="tool-ico" icon="{{item.icon}}" size="72rpx" radius="22rpx"
+              fs="calc(36rpx * var(--fs, 1))" bg="{{item.color}}" />
+    <view class="tool-main">
+      <view class="tool-name">{{item.name}}</view>
+      <view class="tool-desc">{{item.desc}}</view>
+    </view>
+    <view class="tool-btn ghost" bindtap="hide" data-name="{{item.name}}">🚫 隐藏</view>
+  </view>
+</view>
+
+<view class="footer-tip" bindtap="goHome">回首页看看 ›</view>
+
+</view>

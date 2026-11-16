@@ -1,0 +1,92 @@
+/* pages/profile/feedback/feedback.wxss 联系开发者 / 意见反馈 */
+
+.hero {
+  background: var(--primary-grad, linear-gradient(135deg, #ff8fab, #ffb3c6));
+  box-shadow: 0 8rpx 30rpx var(--primary-mid, rgba(255, 143, 171, 0.35));
+}
+
+/* 邮箱卡片 */
+.email-card {
+  display: flex;
+  align-items: center;
+  margin-top: 24rpx;
+}
+
+.email-ico {
+  font-size: calc(40rpx * var(--fs, 1));
+  margin-right: 20rpx;
+}
+
+.email-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.email-label {
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.email-value {
+  margin-top: 6rpx;
+  font-size: calc(28rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--primary, #ff8fab);
+  word-break: break-all;
+}
+
+.email-act {
+  flex-shrink: 0;
+  padding: 10rpx 24rpx;
+  border-radius: 999rpx;
+  background: var(--primary-weak, rgba(255, 143, 171, 0.14));
+  color: var(--primary, #ff8fab);
+  font-size: calc(24rpx * var(--fs, 1));
+}
+
+/* 类型选择 */
+.type-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.type-btn {
+  padding: 14rpx 26rpx;
+  border-radius: 999rpx;
+  background: var(--card);
+  color: var(--sub);
+  font-size: calc(25rpx * var(--fs, 1));
+  box-shadow: var(--shadow);
+}
+
+.type-btn.active {
+  background: var(--primary, #ff8fab);
+  color: #fff;
+  font-weight: bold;
+}
+
+.must {
+  color: #ff6f6f;
+}
+
+.optional {
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+  font-weight: normal;
+}
+
+.count-tip {
+  margin-top: 10rpx;
+  text-align: right;
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.submit-btn {
+  margin-top: 44rpx;
+}
+
+.footer-tip {
+  margin-top: 28rpx;
+}

@@ -1,0 +1,207 @@
+@import "../../../styles/game.wxss";
+
+/* pages/games/jiyifanpai/jiyifanpai.wxss 记忆翻牌 */
+
+/* ===== 关卡进度 ===== */
+.level-bar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin: 4rpx 0 16rpx;
+}
+
+.level-name {
+  font-size: calc(26rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--primary, #ff8fab);
+}
+
+.level-size {
+  padding: 4rpx 14rpx;
+  border-radius: 999rpx;
+  background: var(--primary-weak, rgba(255, 143, 171, 0.14));
+  color: var(--primary, #ff8fab);
+  font-size: calc(21rpx * var(--fs, 1));
+}
+
+.level-progress {
+  flex: 1;
+  display: flex;
+  gap: 10rpx;
+  justify-content: flex-end;
+}
+
+.level-dot {
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  background: var(--line);
+}
+
+.level-dot.on {
+  background: var(--primary, #ff8fab);
+}
+
+/* ===== 牌桌：正方形格子，棋盘整体也是正方形 =====
+   格子宽度用百分比，padding-bottom 用同一个百分比
+   （padding 百分比按容器宽度计算）⇒ 宽 = 高 */
+.grid-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-box {
+  position: relative;
+  height: 0;
+}
+
+/* 奇数宫格补位的空格 */
+.card-box.blank {
+  visibility: hidden;
+}
+
+.card-f {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 4rpx;
+  box-sizing: border-box;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.card-f.back {
+  background: var(--primary-grad);
+  box-shadow: 0 6rpx 16rpx var(--primary-mid, rgba(255, 143, 171, 0.35));
+}
+
+.card-f.back:active {
+  transform: scale(0.95);
+}
+
+.card-f.open {
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+.card-f.ok {
+  opacity: 0.55;
+}
+
+/* ===== 过关面板（自动进入下一关） ===== */
+.clear-box {
+  margin-top: 32rpx;
+  padding: 36rpx 28rpx;
+  border-radius: 32rpx;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.clear-emoji {
+  font-size: calc(76rpx * var(--fs, 1));
+}
+
+.clear-title {
+  margin-top: 10rpx;
+  font-size: calc(32rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+}
+
+.clear-sub {
+  margin-top: 8rpx;
+  font-size: calc(25rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.clear-next {
+  margin: 18rpx 0 26rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+  color: var(--primary, #ff8fab);
+}
+
+/* ===== 开始界面 ===== */
+
+/* ===== 失败二选一弹层 ===== */
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99;
+}
+
+.fail-dialog {
+  width: 76%;
+  background: var(--card);
+  border-radius: 32rpx;
+  padding: 44rpx 36rpx 32rpx;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.fail-emoji {
+  font-size: calc(80rpx * var(--fs, 1));
+}
+
+.fail-title {
+  margin-top: 12rpx;
+  font-size: calc(34rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+}
+
+.fail-reason {
+  margin-top: 8rpx;
+  font-size: calc(26rpx * var(--fs, 1));
+  color: var(--primary, #ff8fab);
+}
+
+.fail-tip {
+  margin: 18rpx 0 28rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+  color: var(--sub);
+  line-height: 1.6;
+}
+
+.fail-btn {
+  margin-top: 18rpx;
+  padding: 22rpx 0;
+  border-radius: 24rpx;
+  background: var(--mask);
+  color: var(--text);
+  font-size: calc(28rpx * var(--fs, 1));
+  font-weight: bold;
+}
+
+.fail-btn.primary {
+  background: var(--primary-grad, var(--primary-grad, linear-gradient(135deg, #ff8fab, #ffb3c6)));
+  color: #fff;
+}
+
+.fail-close {
+  margin-top: 24rpx;
+  font-size: calc(23rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+/* ===== 本页与公共样式的差异（公共部分在 styles/game.wxss） ===== */
+.stat-num {
+  font-size: calc(40rpx * var(--fs, 1));
+}
+
+.tip {
+  text-align: center;
+  margin: 24rpx 0;
+}

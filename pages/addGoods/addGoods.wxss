@@ -1,0 +1,513 @@
+/* pages/addGoods/addGoods.wxss 单条 + 批量 */
+
+/* ===== 模式切换 ===== */
+.mode-tabs {
+  display: flex;
+  background: var(--mask);
+  border-radius: 32rpx;
+  padding: 6rpx;
+  margin-bottom: 24rpx;
+}
+
+.mode-tab {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: calc(26rpx * var(--fs, 1));
+  color: var(--text);
+  border-radius: 28rpx;
+}
+
+.mode-tab.active {
+  background: var(--primary-grad);
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 4rpx 14rpx var(--primary-mid, rgba(255, 143, 171, 0.3));
+}
+
+.form-item { margin-bottom: 28rpx; }
+.form-item:last-child { margin-bottom: 0; }
+
+/* 标签和输入控件同一行：纵向更紧凑 */
+.form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 22rpx;
+}
+
+.form-row.top { align-items: flex-start; }
+
+/* 标签：竖条 + 文字，和 goods-fields 组件内保持完全一致
+   （这里这份是给页面自己的行用的，比如批量的「统一分类 / 统一位置」） */
+.form-row .form-label {
+  display: flex;
+  align-items: center;
+  width: 130rpx;
+  flex-shrink: 0;
+  margin-bottom: 0;
+  font-size: calc(24rpx * var(--fs, 1));
+  letter-spacing: 1rpx;
+  color: var(--text);
+  font-weight: bold;
+}
+
+.form-row .form-label::before {
+  content: '';
+  width: 6rpx;
+  height: 22rpx;
+  border-radius: 999rpx;
+  background: var(--primary);
+  margin-right: 10rpx;
+  flex-shrink: 0;
+}
+
+/* 选填字段不画竖条，只靠颜色弱化；padding 补上竖条占的宽度保证对齐 */
+.form-row .form-label.opt {
+  color: var(--sub);
+  font-weight: normal;
+  padding-left: 16rpx;
+}
+
+.form-row .form-label.opt::before {
+  display: none;
+}
+
+/* 行内的输入控件：吃掉剩余宽度 */
+.fr-ctl {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 位置输入框 + 「＋」新建 */
+.path-input-row {
+  display: flex;
+  align-items: center;
+}
+
+.path-input-row .input-cute {
+  flex: 1;
+  min-width: 0;
+}
+
+.form-row .input-cute { margin-bottom: 0; }
+
+/* 附属行（快捷按钮 / 新建大类）对齐到输入控件一侧 */
+.form-subrow {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin: -8rpx 0 22rpx 130rpx;
+}
+
+.form-subrow.quick-row {
+  display: flex;
+  margin-top: 0;
+}
+
+.form-label {
+  font-size: calc(26rpx * var(--fs, 1));
+  color: var(--text);
+  font-weight: bold;
+  margin-bottom: 14rpx;
+}
+
+.optional {
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+  font-weight: normal;
+  margin-left: 6rpx;
+}
+
+.picker-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text);
+}
+
+.area {
+  width: 100%;
+  min-height: 120rpx;
+}
+
+/* ===== 图片 ===== */
+/* 图片上传控件放在「物品名称」输入框右边，一眼就能看到 */
+.name-row {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+.name-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.name-img {
+  width: 176rpx;
+  height: 176rpx;
+  border-radius: 22rpx;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--mask);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.name-img-pic {
+  width: 176rpx;
+  height: 176rpx;
+  border-radius: 22rpx;
+}
+
+.name-img-add {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+}
+
+.name-img-plus {
+  font-size: calc(48rpx * var(--fs, 1));
+  line-height: 1;
+  color: var(--primary);
+}
+
+.name-img-txt {
+  font-size: calc(20rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.submit-btn { margin-top: 40rpx; }
+
+/* ===== 批量：先定归属，再一行一件 ===== */
+.target-card {
+  border: 2rpx solid var(--primary-weak, rgba(255, 143, 171, 0.35));
+  margin-bottom: 20rpx;
+}
+
+.target-title {
+  font-size: calc(27rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+  margin-bottom: 18rpx;
+}
+
+/* 批量归属模式：统一分类 / 统一位置 / 分类+位置 */
+.bind-modes {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 18rpx;
+}
+
+.bind-mode {
+  position: relative;
+  flex: 1;
+  padding: 16rpx 6rpx;
+  border-radius: 20rpx;
+  background: var(--mask);
+  text-align: center;
+  transition: transform 0.15s, background 0.2s, box-shadow 0.2s;
+}
+
+.bind-mode-ico {
+  font-size: calc(30rpx * var(--fs, 1));
+}
+
+.bind-mode-txt {
+  margin-top: 4rpx;
+  font-size: calc(21rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.bind-mode.active {
+  background: var(--primary-grad, linear-gradient(135deg, #ff8fab, #ffb3c6));
+  box-shadow: 0 4rpx 14rpx var(--primary-mid, rgba(255, 143, 171, 0.3));
+}
+
+/* 三个模式激活态都是同一渐变，并排时容易分不清"哪个亮着"，
+   补一条下方指示条（白点）强化选中感 */
+.bind-mode.active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 10rpx;
+  width: 22rpx;
+  height: 4rpx;
+  margin-left: -11rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.bind-mode.active .bind-mode-txt {
+  color: #fff;
+  font-weight: bold;
+}
+
+.target-tip {
+  margin-top: 12rpx;
+  padding: 14rpx 18rpx;
+  border-radius: 18rpx;
+  background: var(--primary-weak, rgba(255, 143, 171, 0.12));
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--primary-deep, #e07a95);
+  line-height: 1.6;
+}
+
+.batch-count {
+  margin: 0 0 20rpx;
+  text-align: center;
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+/* 批量卡：同屏会有好几张，阴影叠加会显脏 —— 去掉阴影只留一圈细边，
+   靠间距区分层级；内部行距也收紧一点，省纵向空间 */
+.batch-row-card {
+  margin-bottom: 20rpx;
+  border: 2rpx solid var(--primary-weak, rgba(255, 143, 171, 0.35));
+  box-shadow: none;
+}
+
+.batch-row-card .form-row {
+  margin-bottom: 18rpx;
+}
+
+.row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16rpx;
+  margin-bottom: 22rpx;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.row-no {
+  font-size: calc(26rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--primary-deep, #e07a95);
+}
+
+.row-del {
+  font-size: calc(23rpx * var(--fs, 1));
+  color: var(--sub);
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+  background: var(--mask);
+}
+
+/* 位置大类：横向滚动，不挤占纵向空间（具体标签样式见文件末尾） */
+.row-tags {
+  white-space: nowrap;
+  padding-bottom: 4rpx;
+}
+
+.inline-new {
+  display: inline-block;
+  margin-bottom: 16rpx;
+}
+
+/* 每条自己的图片：控件在名称旁，这里只放「移除图片」小按钮 */
+.row-img-tip {
+  display: inline-block;
+  margin-top: 12rpx;
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  background: var(--mask);
+}
+
+.row-remark { min-height: 100rpx; }
+
+/* 新增一条 */
+.add-row-btn {
+  text-align: center;
+  padding: 24rpx 0;
+  border-radius: 28rpx;
+  border: 2rpx dashed var(--primary, #ff8fab);
+  color: var(--primary-deep, #e07a95);
+  font-size: calc(27rpx * var(--fs, 1));
+  font-weight: bold;
+  background: var(--primary-weak, rgba(255, 143, 171, 0.08));
+}
+
+/* ===== 结果 ===== */
+.result-card { margin-top: 24rpx; }
+
+.result-title {
+  font-size: calc(26rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+  margin-bottom: 22rpx;
+}
+
+/* 三个统计块并排：数字在上、标签在下，比"数字 - 标签"横向排更好扫读 */
+.result-stats {
+  display: flex;
+  gap: 12rpx;
+}
+
+.result-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  padding: 18rpx 0;
+  border-radius: 20rpx;
+  background: var(--mask);
+}
+
+.result-num {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(32rpx * var(--fs, 1));
+  font-weight: bold;
+  color: #fff;
+}
+
+.result-num.ok { background: var(--mint, #5ebfa2); }
+.result-num.fail { background: var(--danger, #ff6f6f); }
+
+/* 「共提交」用中性色，避免和成功/失败抢注意力 */
+.result-num.total {
+  background: transparent;
+  color: var(--text);
+  border: 2rpx dashed var(--primary-mid);
+}
+
+.result-txt {
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.result-failed {
+  margin-top: 14rpx;
+  padding: 14rpx 18rpx;
+  background: var(--mask);
+  border-radius: 16rpx;
+}
+
+.result-line {
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+  line-height: 1.8;
+}
+
+.footer-tip {
+  margin-top: 24rpx;
+}
+
+/* ===== 位置大类标签 ===== */
+.tag-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  margin-bottom: 16rpx;
+}
+
+.tag-item {
+  padding: 10rpx 22rpx;
+  border-radius: 999rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+  background: var(--mask);
+  color: var(--sub);
+}
+
+.tag-item.active {
+  background: var(--primary, #ff8fab);
+  color: #fff;
+  font-weight: bold;
+}
+
+.tag-tip {
+  font-size: calc(21rpx * var(--fs, 1));
+  color: var(--sub);
+  margin-bottom: 14rpx;
+  line-height: 1.6;
+}
+
+/* 「＋」新建按钮统一用全局 .add-mini-btn（app.wxss），这里不再单独定义 */
+
+/* ===== 保质期快捷按钮 ===== */
+.quick-row {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 14rpx;
+}
+
+.quick-btn {
+  flex: 1;
+  text-align: center;
+  padding: 12rpx 0;
+  border-radius: 18rpx;
+  background: var(--primary-weak, rgba(255, 143, 171, 0.14));
+  color: var(--primary-deep, #e07a95);
+  font-size: calc(22rpx * var(--fs, 1));
+}
+
+.quick-btn.ghost {
+  background: var(--mask);
+  color: var(--sub);
+}
+
+/* ===== 批量添加：每行自己的位置大类标签 ===== */
+/* 注意：必须写在 .tag-item 之后，否则会被基础标签样式覆盖 */
+.row-tags .tag-item {
+  display: inline-block;
+  margin: 0 14rpx 10rpx 0;
+  flex-shrink: 0;
+}
+
+.tag-item.new,
+.tag-item.new.active {
+  color: var(--primary-deep, #e07a95);
+  background: var(--primary-weak, rgba(255, 143, 171, 0.16));
+  font-weight: normal;
+}
+
+/* 可点元素统一加一点过渡，配 hover-class="tap-shrink" 才有"按下去"的手感 */
+.tag-item,
+.row-del,
+.add-row-btn,
+.bind-mode {
+  transition: transform 0.15s, opacity 0.15s, background 0.2s;
+}
+
+
+
+/* ===== 批量提交：悬浮在底部，条目再多也不用滚到底去找按钮 ===== */
+.submit-dock {
+  position: sticky;
+  bottom: calc(16rpx + env(safe-area-inset-bottom));
+  z-index: 20;
+  margin-top: 28rpx;
+  padding: 14rpx;
+  border-radius: 999rpx;
+  background: var(--dock, rgba(255, 255, 255, 0.88));
+  box-shadow: 0 10rpx 30rpx var(--primary-mid, rgba(255, 143, 171, 0.28));
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.dock-btn {
+  width: 100%;
+  margin: 0;
+  border-radius: 999rpx;
+}
+
+/* 提交中 / 没有条目时置灰：保留胶囊形状，别掉回 button 的默认灰底 */
+.dock-btn[disabled] {
+  background: var(--primary-weak) !important;
+  color: var(--primary-deep) !important;
+  opacity: 0.6;
+}

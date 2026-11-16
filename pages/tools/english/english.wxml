@@ -1,0 +1,70 @@
+<!--pages/tools/english/english.wxml 每日英语单词（多单词 + TTS） -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<view class="hero" style="background: linear-gradient(135deg, {{levelColor}}, {{levelColor}}cc);">
+  <view class="hero-emoji">🅰️</view>
+  <view class="hero-text">
+    <view class="hero-title">每日单词</view>
+    <view class="hero-sub">{{today}} · {{levelLabel}} · 今日已背 {{todayCount}} 个（不限量）</view>
+  </view>
+  <view class="voice-switch" bindtap="toggleVoice">{{voiceType === 'uk' ? '🇬🇧 英音' : '🇺🇸 美音'}}</view>
+</view>
+
+<view class="cute-card">
+  <view class="form-label">🎚️ 难度选择</view>
+  <view class="diff-row">
+    <view wx:for="{{difficulties}}" wx:key="key"
+          class="diff-btn {{difficulty === item.key ? 'active' : ''}}"
+          style="{{difficulty === item.key ? 'background:' + item.color + ';color:#fff;' : ''}}"
+          bindtap="selectDifficulty" data-key="{{item.key}}">
+      {{item.name}}
+    </view>
+  </view>
+</view>
+
+<!-- 单词卡片 + 翻页 + 朗读 -->
+<view wx:if="{{current}}" class="word-card cute-card">
+  <view class="word-counter">{{wordIndex + 1}} / {{list.length}}</view>
+
+  <!-- 点单词本身即可发音（长按复制） -->
+  <view class="word-row">
+    <view class="word-main {{speaking ? 'speaking' : ''}}" bindtap="speakWord" bindlongpress="copyWord">{{current.w}}</view>
+    <view class="speak-btn {{speaking ? 'on' : ''}}" bindtap="speakWord" hover-class="speak-press">{{speaking ? '⏹' : '🔊'}}</view>
+  </view>
+  <view class="word-phonetic">{{current.p}}</view>
+  <view class="word-mean">{{current.m}}</view>
+  <view class="word-example">
+    <view class="ex-en">📝 {{current.e}}</view>
+    <!-- 例句中文翻译：老数据没有 et 字段就不显示，不会出现空白块 -->
+    <view class="ex-cn" wx:if="{{current.et}}">{{current.et}}</view>
+  </view>
+  <view class="speak-tip">点单词或右上角 🔊 直接听发音，长按单词可复制</view>
+
+  <view class="word-nav">
+    <view class="nav-btn ghost" bindtap="prevWord">‹ 上一个</view>
+    <view class="nav-btn ghost" bindtap="nextWord">下一个 ›</view>
+  </view>
+
+  <view class="mark-row">
+    <button class="mark-btn remembered" bindtap="mark" data-s="remembered" disabled="{{finished}}">✨ 已记住</button>
+    <button class="mark-btn review" bindtap="mark" data-s="review" disabled="{{finished}}">💪 明天再记</button>
+  </view>
+  <view wx:if="{{finished}}" class="finish-tip">今日这个单词已完成打卡～</view>
+</view>
+
+<!-- 打卡记录 -->
+<view class="section-title">最近打卡 📚</view>
+<view wx:if="{{progress.length > 0}}" class="cute-card">
+  <view class="prog-row" wx:for="{{progress}}" wx:key="id">
+    <view class="prog-date">{{item.date}}</view>
+    <view class="prog-word">{{item.word}}</view>
+    <view class="prog-status {{item.status}}">{{item.status === 'remembered' ? '✨ 已记' : '💪 再记'}}</view>
+  </view>
+  <view class="prog-clear" bindtap="clearProgress">清空记录</view>
+</view>
+<view wx:else class="empty-box">
+  <view class="empty-icon">📖</view>
+  <view class="empty-txt">还没有打卡记录，今天就记住一个吧～</view>
+</view>
+
+</view>

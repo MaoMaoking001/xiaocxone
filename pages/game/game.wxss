@@ -1,0 +1,68 @@
+/* pages/game/game.wxss 游戏大厅 */
+
+.hero {
+  display: block;
+  padding: 44rpx 36rpx;
+  background: var(--primary-grad);
+  box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.18);
+}
+
+.hero-title {
+  font-size: calc(40rpx * var(--fs, 1));
+}
+
+.hero-sub {
+  margin-top: 10rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+}
+
+.game-card {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  margin-top: 24rpx;
+}
+
+.game-card:active {
+  transform: scale(0.98);
+}
+
+.game-icon {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 28rpx;
+  background: var(--mask);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(52rpx * var(--fs, 1));
+  flex-shrink: 0;
+}
+
+.game-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.game-name {
+  font-size: calc(32rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+}
+
+.game-desc {
+  margin-top: 8rpx;
+  font-size: calc(23rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.game-best {
+  margin-top: 12rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+  color: var(--primary);
+}
+
+.footer-tip {
+  margin-top: 40rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+}

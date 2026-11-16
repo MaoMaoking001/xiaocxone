@@ -1,0 +1,23 @@
+<!--pages/game/game.wxml 游戏大厅 -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<view class="hero">
+  <view class="hero-title">🧠 记忆小课堂</view>
+  <view class="hero-sub">每天玩一玩，脑子转得快～</view>
+</view>
+
+<view class="game-card cute-card" wx:for="{{games}}" wx:key="name" bindtap="goGame" data-url="{{item.url}}">
+  <!-- 图标：emoji 或图片都能用，判断在 app-icon 组件内部 -->
+  <app-icon class="game-icon" icon="{{item.icon}}" size="100rpx" radius="28rpx"
+            fs="calc(52rpx * var(--fs, 1))" bg="var(--mask)" />
+  <view class="game-main">
+    <view class="game-name">{{item.name}}</view>
+    <view class="game-desc">{{item.desc}}</view>
+    <view class="game-best">🏆 {{item.bestLabel}}：{{item.best}}</view>
+  </view>
+  <view class="cell-arrow">›</view>
+</view>
+
+<view class="footer-tip">玩得开心，也别忘了回来收纳哦 🐰</view>
+
+</view>

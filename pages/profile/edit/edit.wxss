@@ -1,0 +1,85 @@
+/* pages/profile/edit/edit.wxss 编辑资料 */
+
+.form-item {
+  margin-bottom: 30rpx;
+}
+
+.form-item:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  font-size: calc(26rpx * var(--fs, 1));
+  color: var(--text);
+  font-weight: bold;
+  margin-bottom: 14rpx;
+}
+
+.picker-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text);
+}
+
+.ph {
+  color: var(--sub);
+}
+
+.area {
+  width: 100%;
+  min-height: 100rpx;
+}
+
+/* ===== 头像 ===== */
+.avatar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.avatar-row .form-label {
+  margin-bottom: 0;
+}
+
+.avatar-btn {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+  border-radius: 0;
+}
+
+.avatar-btn::after {
+  border: none;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  border: 6rpx solid var(--primary-soft);
+}
+
+/* 默认头像：主题色圆形 + 🐰（不依赖图片，明暗主题都协调） */
+.avatar-ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background: var(--primary-weak);
+  font-size: calc(58rpx * var(--fs, 1));
+  line-height: 1;
+}
+
+.avatar-hint {
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--primary);
+}
+
+.save-btn {
+  margin-top: 40rpx;
+}

@@ -1,0 +1,92 @@
+<!--pages/tools/todo/todo.wxml 待办清单
+
+  【WXML 语法速查（其他页面的 wxml 都是同一套写法）】
+    {{  }}              数据绑定：把 js 里 data 的值显示出来，也能做简单运算和三目
+    wx:if / wx:elif / wx:else   条件渲染：整个节点"存在或不存在"
+    hidden              条件隐藏：节点还在，只是 display:none（适合频繁切换）
+    wx:for / wx:item / wx:index / wx:key  列表渲染
+    <block>             包装用，渲染时自己不产生节点，只用来挂 wx:if / wx:for
+    bindtap / bindinput / bindlongpress / bindchange   事件绑定（冒泡）
+    catchtap            事件绑定但不冒泡（内层按钮不会触发外层点击）
+    data-xxx="值"        往事件里塞参数，js 里用 e.currentTarget.dataset.xxx 取
+    class="{{...}}"     样式名也能动态拼，比如完成态加 done，未完成不加
+
+  【页面结构】
+    上半部分：添加表单（输入框 + 两个 picker + 按钮）
+    下半部分：列表（有数据渲染列表，没数据渲染空状态）
+-->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+<!-- ↑ 根节点：theme 控制浅色/深色整套变量；bgStyle 是自定义背景；
+     accentStyle 是主题色变量（--primary 等）+ 字号倍数 --fs。
+     每个页面都这么写，全站风格才能统一。 -->
+
+<!-- 添加任务 -->
+<view class="cute-card">
+  <!-- bindinput：每输入一个字就触发 onTitle，把内容存进 data.title（双向绑定的"手动版"）
+       bindconfirm：键盘右下角"完成"键触发，直接调用 add -->
+  <input class="input-cute" placeholder="要做什么呢？如：取快递 📦"
+         value="{{title}}" bindinput="onTitle" confirm-type="done" bindconfirm="add" />
+  <view class="deadline-row">
+    <!-- picker 是微信自带的底部滚轮选择器：
+         mode="date" 选到"天"，mode="time" 选到"分"。
+         value 是"初始显示哪天/哪一刻"，bindchange 在用户确认后触发。
+         {{deadlineDate || today}}：没选过就默认顶到今天 -->
+    <picker class="deadline-picker" mode="date" value="{{deadlineDate || today}}" bindchange="onDeadlineDate">
+      <view class="input-cute picker-value">
+        <!-- 显示的是 MM-DD（deadlineLabel），没选时显示占位文字 -->
+        📅 {{deadlineLabel || '截止日期'}}
+        <text class="cell-arrow">›</text>
+      </view>
+    </picker>
+    <picker class="deadline-picker" mode="time" value="{{deadlineTime || nowHm}}" bindchange="onDeadlineTime">
+      <view class="input-cute picker-value">
+        ⏰ {{deadlineTime || '几点几分'}}
+        <text class="cell-arrow">›</text>
+      </view>
+    </picker>
+  </view>
+  <button class="btn-cute add-btn add-full" bindtap="add">＋ 添加</button>
+</view>
+
+<!-- 任务列表 -->
+<view class="section-title">我的待办 📝</view>
+
+<!-- wx:if / wx:else 必须相邻，中间不能插别的节点，否则 else 认不到 if -->
+<block wx:if="{{list.length > 0}}">
+  <!--
+    wx:for="{{list}}" 循环渲染，每一项默认叫 item，下标叫 index
+    wx:key="id"      给每项一个稳定标识，列表增删时框架才知道"谁是谁"，
+                     不写会报警告、动画也会错乱
+    class="... {{item.done ? 'done' : ''}}"  完成态追加 done 类（画删除线/变灰）
+    bindlongpress    长按事件，长按 350ms 触发，这里用来删除
+    data-id          把这条待办的 id 带进事件，js 里 e.currentTarget.dataset.id
+  -->
+  <view class="cute-card todo-item {{item.done ? 'done' : ''}}"
+        wx:for="{{list}}" wx:key="id"
+        catchtap="del" data-id="{{item.id}}">
+    <!-- 勾选框：点它切换完成状态。注意 class 是动态拼的，
+         勾选后加上 checked 才会有实心背景 -->
+    <view class="check-box {{item.done ? 'checked' : ''}}" bindtap="toggle" data-id="{{item.id}}">
+      {{item.done ? '✓' : ''}}
+    </view>
+    <view class="todo-main" bindtap="toggle" data-id="{{item.id}}">
+      <view class="todo-title">{{item.title}}</view>
+      <view class="todo-sub">
+        <!-- 有截止时间才显示这一行，且逾期时把文字标红（class 动态加 overdue） -->
+        <text wx:if="{{item.deadline}}" class="{{item.overdue ? 'overdue' : ''}}">
+          ⏰ 截止 {{item.deadline}}{{item.deadlineTime ? ' ' + item.deadlineTime : ''}}{{item.overdue ? '（已逾期）' : ''}}
+        </text>
+        <text wx:else>无截止时间</text>
+      </view>
+    </view>
+    <text class="cell-value">长按删除</text>
+  </view>
+</block>
+
+<!-- 没有待办时显示的空状态；wx:else 跟上面 block 的 wx:if 配对 -->
+<view wx:else class="empty-box">
+  <view class="empty-icon">🌷</view>
+  <view class="empty-txt">没有待办，轻松自在～</view>
+</view>
+
+</view>

@@ -1,0 +1,219 @@
+@import "../../../styles/game.wxss";
+
+/* pages/games/gebujiyi/gebujiyi.wxss N-back 训练 */
+
+.hero {
+  background: var(--primary-grad, linear-gradient(135deg, #ff8fab, #ffb3c6));
+  box-shadow: 0 8rpx 30rpx var(--primary-mid, rgba(255, 143, 171, 0.35));
+}
+
+/* N 选择 */
+.pick-title {
+  margin: 22rpx 0 12rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--sub);
+}
+
+.pick-sub {
+  margin-left: 10rpx;
+  font-weight: normal;
+}
+
+.n-row {
+  display: flex;
+  gap: 12rpx;
+}
+
+.n-btn {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  border-radius: 20rpx;
+  background: var(--card);
+  color: var(--sub);
+  font-size: calc(26rpx * var(--fs, 1));
+  box-shadow: var(--shadow);
+}
+
+.n-btn.active {
+  background: var(--primary, #ff8fab);
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 节奏（每回合时长）选择 */
+.speed-row {
+  display: flex;
+  gap: 12rpx;
+}
+
+.speed-btn {
+  flex: 1;
+  padding: 12rpx 0;
+  border-radius: 20rpx;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.speed-label {
+  font-size: calc(26rpx * var(--fs, 1));
+  color: var(--sub);
+  font-weight: bold;
+}
+
+.speed-tip {
+  margin-top: 4rpx;
+  font-size: calc(19rpx * var(--fs, 1));
+  color: var(--sub);
+  opacity: 0.75;
+}
+
+.speed-btn.active {
+  background: var(--primary, #ff8fab);
+}
+
+.speed-btn.active .speed-label,
+.speed-btn.active .speed-tip {
+  color: #fff;
+}
+
+/* 统计 */
+
+.stat-unit {
+  font-size: calc(20rpx * var(--fs, 1));
+  color: var(--sub);
+  font-weight: normal;
+}
+
+.stat-num.mint {
+  color: var(--mint);
+}
+
+.stat-num.butter {
+  color: var(--butter);
+}
+
+/* 刺激方格：正方形格子，棋盘整体正方 */
+.nb-board {
+  margin: 30rpx auto;
+  width: 560rpx;
+  max-width: 100%;
+}
+
+.nb-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.nb-box {
+  position: relative;
+  height: 0;
+}
+
+.nb-cell {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 22rpx;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  transition: all 0.12s;
+}
+
+.nb-cell.on {
+  background: var(--primary, #ff8fab);
+  transform: scale(1.06);
+}
+
+/* 反馈 */
+.feedback {
+  text-align: center;
+  height: 48rpx;
+  line-height: 48rpx;
+  font-size: calc(28rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--sub);
+}
+
+.feedback.ok {
+  color: var(--mint);
+}
+
+.feedback.bad {
+  color: #f06a6a;
+}
+
+.feedback.miss {
+  color: var(--butter);
+}
+
+/* 作答 */
+.ans-row {
+  display: flex;
+  gap: 20rpx;
+  margin: 18rpx 0 24rpx;
+}
+
+.ans-btn {
+  flex: 1;
+  text-align: center;
+  padding: 26rpx 0;
+  border-radius: 24rpx;
+  font-size: calc(26rpx * var(--fs, 1));
+  font-weight: bold;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+.ans-btn.yes {
+  color: var(--mint);
+}
+
+.ans-btn.no {
+  color: #f06a6a;
+}
+
+.ans-btn:active {
+  transform: scale(0.96);
+}
+
+/* 前 n 个回合不能作答 */
+.ans-btn.disabled {
+  opacity: 0.45;
+}
+
+/* 进度 */
+.progress-bar {
+  height: 12rpx;
+  border-radius: 999rpx;
+  background: var(--mask);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--primary-grad, var(--primary-grad, linear-gradient(135deg, #ff8fab, #ffb3c6)));
+  transition: width 0.2s;
+}
+
+.footer-tip {
+  margin-top: 28rpx;
+}
+
+/* ===== 本页与公共样式的差异（公共部分在 styles/game.wxss） ===== */
+.stat-row {
+  padding: 22rpx 0;
+}
+.stat-num {
+  font-size: calc(32rpx * var(--fs, 1));
+}
+.stat-txt {
+  font-size: calc(21rpx * var(--fs, 1));
+}
+.start-btn {
+  margin-top: 28rpx;
+}

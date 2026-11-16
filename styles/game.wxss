@@ -1,0 +1,57 @@
+/* styles/game.wxss  游戏页公共样式
+ *
+ * 由 6 个游戏页在 wxss 顶部 @import "../../../styles/game.wxss"; 引入。
+ * 只放共用的部分；各页的字号 / 间距差异仍写在自己页面里覆盖。
+ *
+ * 注意：shudu 用的是另一套 stats-row / stat-label 结构，没有引入本文件。
+ */
+
+/* 统计条容器：stat-bar 与 stat-row 是历史命名差异，样式一致 */
+.stat-bar,
+.stat-row {
+  display: flex;
+  padding: 24rpx 0;
+}
+
+.stat {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-num {
+  font-size: calc(36rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--primary, #ff8fab);
+}
+
+.stat-txt {
+  margin-top: 6rpx;
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+/* 开始前的说明面板 */
+.ready-box {
+  text-align: center;
+  padding: 100rpx 40rpx;
+}
+
+.ready-emoji {
+  font-size: calc(120rpx * var(--fs, 1));
+  margin-bottom: 24rpx;
+}
+
+.start-btn {
+  margin-top: 48rpx;
+}
+
+.restart-btn {
+  margin-top: 36rpx;
+  background: var(--card);
+  color: var(--primary);
+  box-shadow: var(--shadow);
+}
+
+/* 说明：.tip 没有放进公共文件。gebujiyi / shuertefangge 的 wxml 里也有
+   class="tip" 的节点，但它们本来就没有对应的样式规则，放进公共文件会给
+   这两个页面凭空加上居中和间距。所以 .tip 留在真正需要它的三个页面里。 */

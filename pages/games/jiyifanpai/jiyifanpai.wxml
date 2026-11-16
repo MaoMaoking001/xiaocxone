@@ -1,0 +1,80 @@
+<!--pages/games/jiyifanpai/jiyifanpai.wxml 记忆翻牌（九/十六/二十五宫格 + 自动进关） -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<view class="stat-bar cute-card">
+  <view class="stat">
+    <view class="stat-num">{{moves}}</view>
+    <view class="stat-txt">步数 / {{maxMoves}}</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{remain}}s</view>
+    <view class="stat-txt">剩余时间</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{totalScore}}</view>
+    <view class="stat-txt">累计得分</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{best}}</view>
+    <view class="stat-txt">🏆 最高分</view>
+  </view>
+</view>
+
+<view wx:if="{{status !== 'ready'}}" class="level-bar">
+  <view class="level-name">{{levelName}}</view>
+  <view class="level-size">{{boardSize}} 宫格</view>
+  <view class="level-progress">
+    <view wx:for="{{levelTotal}}" wx:key="*this"
+          class="level-dot {{index <= level ? 'on' : ''}}"></view>
+  </view>
+</view>
+<view class="tip sub-txt" wx:if="{{status === 'playing'}}">翻开卡牌配对，宫格越大越难，超时或步数用尽就失败啦～</view>
+
+<!-- 牌桌：正方形格子（宽 = 高），整体也是正方形棋盘 -->
+<view class="grid" wx:if="{{status !== 'ready'}}">
+  <view class="grid-row" wx:for="{{rows}}" wx:for-item="row" wx:key="key"
+        style="margin-bottom:{{index < rows.length - 1 ? gapPct : 0}}%">
+    <view wx:for="{{row.list}}" wx:for-item="c" wx:key="id"
+          class="card-box {{c.blank ? 'blank' : ''}}"
+          style="width:{{cellPct}}%;padding-bottom:{{cellPct}}%">
+      <view wx:if="{{!c.blank}}"
+            class="card-f {{c.open ? 'open' : 'back'}} {{c.matched ? 'ok' : ''}}"
+            style="font-size:{{fontRpx}}rpx"
+            bindtap="flip" data-idx="{{c.idx}}">{{c.open ? c.emoji : '❓'}}</view>
+    </view>
+  </view>
+</view>
+
+<!-- 过关面板：自动进入下一关 -->
+<view wx:if="{{status === 'clear'}}" class="clear-box">
+  <view class="clear-emoji">🎉</view>
+  <view class="clear-title">{{levelName}} 通过！</view>
+  <view class="clear-sub">本关得分 +{{clearGain}} · 累计 {{totalScore}}</view>
+  <view class="clear-next">{{clearCountdown}} 秒后自动进入「{{clearNext + 1}}」关…</view>
+  <view class="fail-btn primary" bindtap="nextLevelNow">立刻进入下一关 ›</view>
+  <view class="fail-btn" bindtap="stopHere">就到这里，结束挑战</view>
+</view>
+
+<!-- 开始 / 重开 -->
+<view wx:if="{{status === 'ready'}}" class="ready-box">
+  <view class="ready-emoji">🃏</view>
+  <view class="sub-txt">共 {{levelTotal}} 关：九宫格 → 十六宫格 → 二十五宫格，难度逐级递增！</view>
+  <button class="btn-cute start-btn" bindtap="start">开始挑战</button>
+</view>
+<button wx:elif="{{status === 'playing'}}" class="btn-cute restart-btn" bindtap="start">🔄 从头开始</button>
+<button wx:elif="{{status === 'win' || status === 'fail'}}" class="btn-cute restart-btn" bindtap="start">🔄 再玩一次</button>
+
+<!-- 失败二选一弹层 -->
+<view wx:if="{{failChoice}}" class="mask">
+  <view class="fail-dialog">
+    <view class="fail-emoji">😢</view>
+    <view class="fail-title">本关失败</view>
+    <view class="fail-reason">{{failReason}}</view>
+    <view class="fail-tip">在「{{levelName}}」倒下了，接下来想怎么继续？</view>
+    <view class="fail-btn primary" bindtap="retryLevel">① 从这一关继续</view>
+    <view class="fail-btn" bindtap="restartAll">② 从头第一关开始</view>
+    <view class="fail-close" bindtap="closeFail">稍后再说</view>
+  </view>
+</view>
+
+</view>

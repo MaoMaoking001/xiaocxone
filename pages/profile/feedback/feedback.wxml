@@ -1,0 +1,49 @@
+<!--pages/profile/feedback/feedback.wxml 联系开发者 / 意见反馈 -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<view class="hero">
+  <view class="hero-emoji">💌</view>
+  <view class="hero-text">
+    <view class="hero-title">联系开发者</view>
+    <view class="hero-sub">建议 / BUG / 想加的功能，都可以告诉我们 🐰</view>
+  </view>
+</view>
+
+<view class="cute-card email-card" bindtap="copyEmail">
+  <view class="email-ico">📧</view>
+  <view class="email-main">
+    <view class="email-label">开发者邮箱</view>
+    <view class="email-value">{{email}}</view>
+  </view>
+  <view class="email-act">复制</view>
+</view>
+
+<view class="section-title">反馈类型</view>
+<view class="type-row">
+  <view wx:for="{{types}}" wx:key="key"
+        class="type-btn {{type === item.key ? 'active' : ''}}"
+        bindtap="pickType" data-k="{{item.key}}">{{item.label}}</view>
+</view>
+
+<view class="section-title">反馈内容 <text class="must">*</text></view>
+<view class="cute-card">
+  <textarea class="input-cute area" placeholder="说说你的想法吧～（至少 5 个字）"
+            value="{{content}}" bindinput="onContent" auto-height maxlength="500" />
+  <view class="count-tip">{{content.length}}/500</view>
+</view>
+
+<view class="section-title">联系方式 <text class="optional">（选填，方便回复你）</text></view>
+<view class="cute-card">
+  <input class="input-cute" placeholder="QQ / 微信 / 邮箱，任选一个"
+         value="{{contact}}" bindinput="onContact" />
+</view>
+
+<button class="btn-cute submit-btn" bindtap="submit" disabled="{{submitting}}">
+  {{submitting ? '发送中…' : '📮 提交反馈'}}
+</button>
+
+<view class="footer-tip">
+  已提交 {{sentCount}} 条 · 每一条我们都会认真看 🌷
+</view>
+
+</view>

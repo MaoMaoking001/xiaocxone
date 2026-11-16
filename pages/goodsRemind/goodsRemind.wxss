@@ -1,0 +1,251 @@
+/* pages/goodsRemind/goodsRemind.wxss 保质期提醒设置 */
+/* 结构统一成：卡片标题（带下分割线）+ 内容块。
+   标题不再用 emoji 前缀：彩色 emoji 在不同机型渲染差异大，也和粉色主题抢注意力 */
+
+.auto-tip {
+  margin: 0 8rpx 18rpx;
+  font-size: calc(21rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.set-card {
+  margin-bottom: 24rpx;
+}
+
+.set-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14rpx;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.set-title {
+  font-size: calc(27rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--text);
+}
+
+/* 只有阈值不是默认值时才出现，属于"后悔药"，所以做得轻 */
+.set-reset {
+  padding: 6rpx 18rpx;
+  border-radius: 999rpx;
+  background: var(--mask);
+  font-size: calc(21rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+/* ===== 阈值：大数字 + 一句话说明 ===== */
+.rule-top {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin: 22rpx 0 6rpx;
+}
+
+.rule-num {
+  flex-shrink: 0;
+  min-width: 150rpx;
+  font-size: calc(58rpx * var(--fs, 1));
+  font-weight: bold;
+  line-height: 1;
+  color: var(--primary-deep, #e07a95);
+  font-variant-numeric: tabular-nums;
+}
+
+.rule-unit {
+  margin-left: 6rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+  font-weight: normal;
+}
+
+.rule-desc {
+  flex: 1;
+  min-width: 0;
+}
+
+.rule-desc-main {
+  font-size: calc(23rpx * var(--fs, 1));
+  color: var(--text);
+}
+
+.rule-desc-sub {
+  margin-top: 6rpx;
+  font-size: calc(21rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+/* 滑块 + 两侧微调按钮：1~365 天的跨度靠手指很难精确到某天 */
+.set-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin: 16rpx 0 4rpx;
+}
+
+.set-slider {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.set-step {
+  width: 68rpx;
+  height: 68rpx;
+  line-height: 68rpx;
+  flex-shrink: 0;
+  text-align: center;
+  border-radius: 50%;
+  background: var(--mask);
+  font-size: calc(30rpx * var(--fs, 1));
+  color: var(--text);
+}
+
+/* 常用档位：滑块停在 30 这种整数上比"拖"容易 */
+.preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin: 14rpx 0 6rpx;
+}
+
+.preset {
+  padding: 8rpx 22rpx;
+  border-radius: 999rpx;
+  background: var(--mask);
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--text-2, #6b5c64);
+}
+
+.preset.on {
+  background: var(--primary-weak, rgba(255, 143, 171, 0.14));
+  color: var(--primary-deep, #e07a95);
+  font-weight: bold;
+  box-shadow: inset 0 0 0 2rpx var(--primary, #ff8fab);
+}
+
+/* ===== 开关行：左说明右开关，说明紧跟在标题下面 ===== */
+.set-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.set-item:last-child {
+  border-bottom: none;
+  padding-bottom: 4rpx;
+}
+
+.set-item-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 免打扰开着时这一项不生效：整行降级，但内容仍可读 */
+.set-item.dim {
+  opacity: 0.5;
+}
+
+.set-label {
+  font-size: calc(26rpx * var(--fs, 1));
+  color: var(--text);
+}
+
+.set-switch {
+  flex-shrink: 0;
+  transform: scale(0.92);       /* 原生开关偏大，缩一点和文字更协调 */
+  transform-origin: right center;
+}
+
+/* ===== 已忽略 ===== */
+/* 标题右侧的小数字：一眼知道总共忽略了几件 */
+.set-count {
+  margin-left: 10rpx;
+  padding: 0 12rpx;
+  border-radius: 999rpx;
+  background: var(--primary-weak, rgba(255, 143, 171, 0.14));
+  font-size: calc(20rpx * var(--fs, 1));
+  font-weight: normal;
+  color: var(--primary-deep, #e07a95);
+  line-height: 1.7;
+}
+
+/* 一行一件事：名字 + 到期状态，右侧一个「恢复」 */
+.muted-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.muted-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.muted-name {
+  font-size: calc(25rpx * var(--fs, 1));
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 物品已经不在了：说清楚，别让用户以为还能点进去看 */
+.muted-name.gone {
+  color: var(--sub);
+  text-decoration: line-through;
+}
+
+.muted-meta {
+  margin-top: 4rpx;
+  font-size: calc(21rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.muted-back {
+  flex-shrink: 0;
+  padding: 10rpx 24rpx;
+  border-radius: 999rpx;
+  background: var(--primary-weak, rgba(255, 143, 171, 0.14));
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--primary-deep, #e07a95);
+  font-weight: bold;
+}
+
+.muted-empty {
+  padding: 22rpx 0 6rpx;
+  font-size: calc(24rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+/* ===== 说明文字 ===== */
+.set-tip {
+  margin: 12rpx 0 2rpx;
+  font-size: calc(21rpx * var(--fs, 1));
+  line-height: 1.65;
+  color: var(--sub);
+}
+
+/* 跟在一行设置后面的说明：不属于独立段落，不占用额外的行高 */
+.set-tip.sub {
+  margin: 6rpx 0 0;
+  font-size: calc(21rpx * var(--fs, 1));
+}
+
+.set-foot {
+  margin: 6rpx 8rpx 0;
+  padding: 20rpx 24rpx;
+  border-radius: 20rpx;
+  background: var(--mask);
+  font-size: calc(20rpx * var(--fs, 1));
+  line-height: 1.7;
+  color: var(--sub);
+}
+
+.set-foot view + view {
+  margin-top: 6rpx;
+}

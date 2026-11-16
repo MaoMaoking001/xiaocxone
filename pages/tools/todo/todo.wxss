@@ -1,0 +1,114 @@
+/* pages/tools/todo/todo.wxss */
+
+/* 截止日期 + 几点几分，两个 picker 并排 */
+.deadline-row {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 20rpx;
+  align-items: center;
+}
+
+.deadline-picker {
+  flex: 1;
+  min-width: 0;
+}
+
+.deadline-picker .picker-value {
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.picker-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.add-btn {
+  margin: 0;
+  font-size: calc(26rpx * var(--fs, 1));
+  line-height: 2.4;
+  padding: 0;
+}
+
+.add-btn.add-full {
+  width: 100%;
+  margin-top: 20rpx;
+}
+
+/* ===== 任务项 ===== */
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  margin-bottom: 20rpx;
+}
+
+.check-box {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  border: 4rpx solid var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: calc(30rpx * var(--fs, 1));
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.check-box.checked {
+  background: var(--primary);
+}
+
+.todo-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.todo-title {
+  /* inline-block + max-width：让标题盒子只有文字那么宽，
+     删除线才不会从行首一直拉到行尾（下面 ::after 靠这个定位） */
+  display: inline-block;
+  max-width: 100%;
+  position: relative;
+  vertical-align: top;   /* 去掉 inline-block 底部那段基线空隙 */
+  font-size: calc(29rpx * var(--fs, 1));
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 完成态：文字变浅，线条交给下面的伪元素画 */
+.todo-item.done .todo-title {
+  color: var(--sub);
+}
+
+/* 自己画删除线（替代 text-decoration: line-through）
+   好处：位置、粗细、颜色都能精确控制，也不会因机型不同而偏高偏低；
+   想改成虚线，把 background 换成 border-top: 2rpx dashed var(--sub) 即可。 */
+.todo-item.done .todo-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2rpx;
+  background: var(--sub);
+  transform: translateY(-50%);
+}
+
+.todo-sub {
+  margin-top: 8rpx;
+  font-size: calc(22rpx * var(--fs, 1));
+  color: var(--sub);
+}
+
+.overdue {
+  color: #f06a6a;
+}

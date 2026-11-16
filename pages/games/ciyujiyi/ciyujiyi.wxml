@@ -1,0 +1,51 @@
+<!--pages/games/ciyujiyi/ciyujiyi.wxml 词语记忆 -->
+<view class="page-root {{theme}}" style="{{bgStyle}}{{accentStyle}}">
+
+<view class="stat-bar cute-card">
+  <view class="stat">
+    <view class="stat-num">{{round + 1}}</view>
+    <view class="stat-txt">关卡</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{score}}</view>
+    <view class="stat-txt">分数</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{lives}}</view>
+    <view class="stat-txt">❤️ 生命</view>
+  </view>
+  <view class="stat">
+    <view class="stat-num">{{best}}</view>
+    <view class="stat-txt">🏆 最高</view>
+  </view>
+</view>
+
+<view wx:if="{{showHint}}" class="tip sub-txt">{{hint}}</view>
+
+<!-- 记忆阶段：竖排展示目标词 -->
+<view wx:if="{{status === 'show'}}" class="word-list">
+  <view wx:for="{{targetWords}}" wx:key="*this" class="word-item">
+    {{item}}
+  </view>
+  <view class="timer">⏳ 还有 {{left}} 秒</view>
+</view>
+
+<!-- 选择阶段：候选网格 -->
+<view wx:if="{{status === 'select'}}" class="opt-grid">
+  <view wx:for="{{options}}" wx:key="index"
+        class="opt-item {{item.picked ? 'picked' : ''}}"
+        bindtap="pick" data-idx="{{index}}">
+    {{item.w}}
+  </view>
+</view>
+
+<!-- 开始界面 -->
+<view wx:if="{{status === 'ready'}}" class="ready-box">
+  <view class="ready-emoji">📝</view>
+  <view class="sub-txt">记住闪现的词，隐藏后找出来～</view>
+  <button class="btn-cute start-btn" bindtap="start">开始游戏</button>
+</view>
+
+<button wx:elif="{{status !== 'ready' && status !== 'over'}}" class="btn-cute restart-btn" bindtap="start">🔄 重新开始</button>
+
+</view>

@@ -1,0 +1,70 @@
+@import "../../../styles/game.wxss";
+
+/* pages/games/ciyujiyi/ciyujiyi.wxss */
+
+/* 记忆阶段 */
+.word-list {
+  margin-top: 30rpx;
+  background: var(--card);
+  border-radius: 28rpx;
+  padding: 36rpx 32rpx;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  align-items: center;
+}
+
+.word-item {
+  font-size: calc(40rpx * var(--fs, 1));
+  font-weight: bold;
+  color: var(--primary);
+  letter-spacing: 4rpx;
+}
+
+.timer {
+  margin-top: 16rpx;
+  font-size: calc(26rpx * var(--fs, 1));
+  color: var(--butter);
+  font-weight: bold;
+}
+
+/* 选择阶段 */
+.opt-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+  margin-top: 30rpx;
+}
+
+.opt-item {
+  height: 100rpx;
+  background: var(--card);
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(30rpx * var(--fs, 1));
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.opt-item:active {
+  transform: scale(0.95);
+}
+
+.opt-item.picked {
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: bold;
+}
+
+/* 开始 / 重开 */
+
+/* ===== 本页与公共样式的差异（公共部分在 styles/game.wxss） ===== */
+.tip {
+  text-align: center;
+  margin: 24rpx 0;
+  color: var(--primary);
+  font-weight: bold;
+}

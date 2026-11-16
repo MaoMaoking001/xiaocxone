@@ -1,0 +1,14 @@
+# 依赖目录（云函数安装过依赖时会产生，不必提交）
+node_modules/
+miniprogram_npm/
+
+# 微信开发者工具的本地私有配置（个人编译模式、真机调试设置等，每台机器不同）
+project.private.config.json
+
+# 系统 / 编辑器生成
+.DS_Store
+Thumbs.db
+*.log
+
+# 本地手工备份
+*.bak
